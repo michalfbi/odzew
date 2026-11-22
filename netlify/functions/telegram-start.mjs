@@ -12,7 +12,12 @@ export default async function obsluz() {
   const r = await fetch(`https://api.telegram.org/bot${token}/getUpdates`);
   if (!r.ok) return odp('Telegram odrzucił token bota. Sprawdź, czy TELEGRAM_BOT_TOKEN jest wklejony w całości.', 502);
   const wpisy = ((await r.json()).result || []).map(u => u.message).filter(m => m && m.chat && m.chat.type === 'private');
-  if (!wpisy.length) return odp('Bot nie dostał jeszcze żadnej wiadomości. Otwórz bota w Telegramie, naciśnij Start i odśwież tę stronę.', 404);
+  if (!wpisy.length) {
+    // Nazwa bota nie jest tajna, a pozwala sprawdzić, czy wklejony token należy do właściwego bota.
+    const ja = await fetch(`https://api.telegram.org/bot${token}/getMe`).then(x => x.json()).catch(() => ({}));
+    const nazwa = ja.result && ja.result.username ? '@' + ja.result.username : 'nieznany';
+    return odp(`Bot ${nazwa} nie dostał jeszcze żadnej wiadomości. Otwórz tego bota w Telegramie, naciśnij Start i odśwież tę stronę.`, 404);
+  }
   const id = wpisy[wpisy.length - 1].chat.id;
   const w = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: id, text: `Identyfikator tego czatu: ${id}\nWpisz go w Netlify jako TELEGRAM_CHAT_ID. Od tej chwili będą tu przychodzić podsumowania rozmów Oli.` }) });
   return w.ok ? odp('Wysłałem identyfikator czatu na Telegram. Sprawdź rozmowę z botem.') : odp('Nie udało się wysłać wiadomości na Telegram.', 502);
