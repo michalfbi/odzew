@@ -92,6 +92,14 @@ export default async function obsluz(req) {
   let zdarzenie;
   try { zdarzenie = JSON.parse(tresc); } catch { return new Response('Zła treść', { status: 400 }); }
   if (zdarzenie.type !== 'post_call_transcription') return new Response('Pominięto', { status: 200 });
+  // Tymczasowa diagnostyka: sama budowa pól analizy (nazwy pól i krótkie wartości), bez transkrypcji.
+  try {
+    const skroc = v => typeof v === 'string' ? (v.length > 60 ? v.slice(0, 60) + '…' : v) : v;
+    const szkielet = (o, g = 0) => o && typeof o === 'object' ? (g > 3 ? '…' : Array.isArray(o) ? o.slice(0, 12).map(x => szkielet(x, g + 1)) : Object.fromEntries(Object.entries(o).map(([k, v]) => [k, szkielet(v, g + 1)]))) : skroc(o);
+    const an = (zdarzenie.data || {}).analysis || {};
+    console.log('BUDOWA_ANALIZY ' + JSON.stringify(szkielet(Object.fromEntries(Object.entries(an).filter(([k]) => k !== 'transcript_summary')))));
+    console.log('POLA_DANYCH ' + JSON.stringify(Object.keys(zdarzenie.data || {})));
+  } catch (e) { console.error('diagnostyka', e.message); }
   try {
     await wyslijNaTelegram(token, czat, zbudujWiadomosci(zdarzenie.data || {}));
   } catch (e) { console.error(e.message); return new Response('Nie udało się wysłać na Telegram', { status: 502 }); }
