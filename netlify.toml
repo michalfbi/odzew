@@ -1,0 +1,10 @@
+# Netlify publikuje gotowe pliki z folderu public. Strony nie trzeba budować przy wdrożeniu.
+[build]
+  publish = "public"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"

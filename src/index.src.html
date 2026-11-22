@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Odzew – automatyzacje dla firm</title>
+<meta name="description" content="Odzew z Kielc: każde zapytanie dostaje odpowiedź w minutę, a każda wycena przypomnienie. Dla firm, które sprzedają na wycenę: okna, kuchnie, klimatyzacja, łazienki.">
+<meta property="og:title" content="Odzew – żadne zapytanie nie przepada">
+<meta property="og:description" content="Automatyzacje dla firm, które sprzedają na wycenę. Bezpłatny audyt 30 minut w Twojej firmie.">
+<meta property="og:image" content="https://odzew.tech/odzew-podglad-linku-1200x630.png">
+<meta property="og:url" content="https://odzew.tech/">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://odzew.tech/">
+<link rel="icon" href="data:image/svg+xml;base64,%%FAVICON%%">
+<script>
+/* ====== KONFIGURACJA STRONY: uzupełnij przed publikacją ====== */
+const KONFIG = {
+  webhook: '',        // adres automatyzacji 01, np. https://automaty.odzew.tech/webhook/odzew/zapytanie. Puste = zgłoszenia zbiera Netlify Forms
+  telefon: '',        // np. 600 100 200
+  email: '',          // np. kontakt@odzew.tech
+  administrator: '',  // np. Jan Kowalski VisiLogo, ul. Przykładowa 1, 25-000 Kielce, NIP 0000000000
+  telefonDemo: '000 000 000', // NUMER PRZYKŁADOWY: wpisz tu prawdziwy numer sekretarki, zanim opublikujesz stronę
+  agentId: ''         // puste = bez rozmowy przez przeglądarkę, test tylko przez telefon
+};
+</script>
+<style>
+%%FONTS%%
+:root {
+  /* Układ: szerokie pasy na przemian białe, betonowe i grafitowe; treść w kolumnie 1120 px; jeden żółty akcent na pas. */
+  --sygnal: #FFC21A;
+  --sygnal-jasny: #FFF4CF;
+  --grafit: #16181B;
+  --stal: #565B62;
+  --beton: #F2F3F0;
+  --papier: #FFFFFF;
+  --linia: #D9DCD6;
+  --naglowki: 'Barlow', 'Arial Narrow', Arial, sans-serif;
+  --tekst: 'Inter', Arial, Helvetica, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { margin: 0; background: var(--papier); color: var(--grafit); font: 400 17px/1.55 var(--tekst); }
+h1, h2, h3 { font-family: var(--naglowki); font-weight: 800; margin: 0; text-wrap: balance; letter-spacing: -0.015em; }
+h1 { font-size: clamp(44px, 7.4vw, 88px); line-height: 0.98; letter-spacing: -0.025em; }
+h2 { font-size: clamp(32px, 4.4vw, 50px); line-height: 1.04; }
+h3 { font-size: 23px; line-height: 1.15; }
+p { margin: 0; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--grafit); outline-offset: 3px; border-radius: 4px; }
+.ciemny :focus-visible { outline-color: var(--sygnal); }
+.pas { padding: clamp(56px, 8vw, 96px) 0; }
+.kol { width: min(1120px, 100% - 40px); margin-inline: auto; }
+.beton { background: var(--beton); }
+.ciemny { background: var(--grafit); color: var(--papier); }
+.zolty { background: var(--sygnal); }
+.etykieta { display: inline-block; font: 700 14px/1 var(--naglowki); letter-spacing: 0.08em; text-transform: uppercase; background: var(--sygnal); color: var(--grafit); padding: 7px 12px; border-radius: 6px; }
+.zolty .etykieta { background: var(--grafit); color: var(--sygnal); }
+.naglowek-sekcji { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; margin-bottom: clamp(28px, 4vw, 44px); max-width: 760px; }
+.lead { font-size: clamp(18px, 2vw, 21px); color: var(--stal); max-width: 62ch; }
+.ciemny .lead { color: #C6CACF; }
+.przycisk { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 14px 26px; border-radius: 999px; border: 2px solid var(--grafit); background: var(--grafit); color: var(--papier); font: 700 19px/1 var(--naglowki); text-decoration: none; cursor: pointer; }
+.przycisk:hover { background: #000; }
+.przycisk.jasny { background: transparent; color: var(--grafit); }
+.przycisk.jasny:hover { background: rgba(22, 24, 27, 0.08); }
+.przycisk.zolty-p { background: var(--sygnal); border-color: var(--sygnal); color: var(--grafit); }
+.przycisk.zolty-p:hover { background: #FFD04D; }
+
+/* nagłówek strony */
+.gora { position: sticky; top: 0; z-index: 5; background: var(--sygnal); border-bottom: 2px solid var(--grafit); }
+.gora .kol { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; flex-wrap: wrap; }
+.gora svg { height: 40px; width: auto; display: block; }
+.gora nav { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; font-weight: 600; font-size: 15px; }
+.gora nav a { text-decoration: none; }
+.gora nav a:hover { text-decoration: underline; }
+.gora .przycisk { min-height: 44px; padding: 10px 20px; font-size: 16px; }
+
+/* hero */
+.hero { background: var(--sygnal); padding: clamp(40px, 6vw, 80px) 0 clamp(48px, 7vw, 88px); }
+.hero .kol { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: clamp(28px, 5vw, 64px); align-items: center; }
+.hero-tekst { display: flex; flex-direction: column; gap: 24px; align-items: flex-start; }
+.hero-tekst .lead { color: var(--grafit); font-weight: 500; }
+.hero-akcje { display: flex; gap: 12px; flex-wrap: wrap; }
+.watek { background: var(--grafit); color: var(--papier); border-radius: 26px; padding: 24px; display: flex; flex-direction: column; gap: 14px; box-shadow: 10px 10px 0 rgba(22, 24, 27, 0.18); }
+.watek .czas { font: 700 18px/1 var(--naglowki); color: var(--sygnal); }
+.dymek { max-width: 88%; padding: 14px 16px; border-radius: 18px 18px 18px 6px; background: #2B2F34; font-size: 15.5px; line-height: 1.45; }
+.dymek small { display: block; font-size: 12.5px; color: #B9BEC4; margin-bottom: 4px; }
+.dymek.nasz { align-self: flex-end; background: var(--sygnal); color: var(--grafit); border-radius: 18px 18px 6px 18px; }
+.dymek.nasz small { color: #4A3A00; }
+.watek .puenta { font: 700 19px/1.2 var(--naglowki); padding-top: 6px; }
+
+
+/* sekretarka demo */
+.sekretarka { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(24px, 4vw, 56px); align-items: start; }
+.sekretarka-tekst { display: flex; flex-direction: column; gap: 20px; align-items: flex-start; }
+.numer-demo { font: 800 clamp(40px, 5.6vw, 64px)/1 var(--naglowki); color: var(--sygnal); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; text-decoration: none; }
+.numer-demo.brak { font-size: clamp(22px, 2.6vw, 28px); color: #C6CACF; }
+.zadzwon { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; border-left: 4px solid var(--sygnal); padding: 6px 0 6px 18px; }
+.zadzwon-napis { color: #C6CACF; font-size: 15px; }
+.zadzwon-napis b { color: var(--sygnal); }
+.wskazowki { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; color: #C6CACF; }
+.wskazowki b { color: var(--papier); font-weight: 600; }
+.rozmowa { background: #22252A; border: 1.5px solid #363A40; border-radius: 22px; padding: 22px; display: flex; flex-direction: column; gap: 10px; }
+.rozmowa .naglowek { display: flex; align-items: center; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid #363A40; }
+.rozmowa .awatar { width: 44px; height: 44px; border-radius: 50%; background: var(--sygnal); color: var(--grafit); display: flex; align-items: center; justify-content: center; font: 800 20px/1 var(--naglowki); flex-shrink: 0; }
+.rozmowa .naglowek small { display: block; color: #9CA2A9; font-size: 13px; }
+.kwestia { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 10px; font-size: 15.5px; line-height: 1.45; }
+.kwestia .kto { font-weight: 700; color: #9CA2A9; font-size: 13px; padding-top: 2px; }
+.kwestia.ola .kto { color: var(--sygnal); }
+.kwestia.ola p { color: var(--papier); }
+.kwestia.klient p { color: #C6CACF; }
+.efekt { margin-top: 6px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.efekt div { background: var(--grafit); border-radius: 12px; padding: 12px 14px; font-size: 13.5px; color: #C6CACF; }
+.efekt b { display: block; color: var(--sygnal); font: 700 14px/1.2 var(--naglowki); margin-bottom: 4px; letter-spacing: 0.02em; }
+.uwaga-ai { font-size: 13.5px; color: #9CA2A9; }
+@media (max-width: 900px) { .sekretarka { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 600px) { .efekt { grid-template-columns: minmax(0, 1fr); } .kwestia { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
+
+/* siatki kart */
+.siatka { display: grid; gap: 16px; }
+.s2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.s3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.s4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.karta { background: var(--papier); border: 1.5px solid var(--linia); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 10px; }
+.karta p { color: var(--stal); font-size: 16px; }
+.ciemny .karta { background: #22252A; border-color: #363A40; }
+.ciemny .karta p { color: #C6CACF; }
+.numer { width: 40px; height: 40px; border-radius: 50%; background: var(--sygnal); color: var(--grafit); display: flex; align-items: center; justify-content: center; font: 800 21px/1 var(--naglowki); flex-shrink: 0; }
+.wiersz { display: flex; align-items: center; gap: 12px; }
+.liczba { font: 800 clamp(48px, 6vw, 72px)/1 var(--naglowki); color: var(--sygnal); }
+.zrodlo { font-size: 13.5px; color: #9CA2A9; }
+
+/* kalkulator */
+.kalk { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); gap: 20px; align-items: stretch; }
+.kalk form { background: var(--papier); border: 1.5px solid var(--linia); border-radius: 16px; padding: 26px; display: flex; flex-direction: column; gap: 20px; }
+.pole { display: flex; flex-direction: column; gap: 8px; }
+.pole label { font-weight: 600; font-size: 15.5px; display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.pole output { font: 800 21px/1 var(--naglowki); font-variant-numeric: tabular-nums; white-space: nowrap; }
+input[type=range] { width: 100%; accent-color: var(--grafit); height: 28px; margin: 0; }
+.wynik { background: var(--grafit); color: var(--papier); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 18px; justify-content: space-between; }
+.wynik .duza { font: 800 clamp(44px, 6vw, 68px)/1 var(--naglowki); color: var(--sygnal); font-variant-numeric: tabular-nums; }
+.wynik dl { margin: 0; display: grid; grid-template-columns: 1fr auto; gap: 10px 16px; font-size: 16px; }
+.wynik dt { color: #C6CACF; }
+.wynik dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
+.wynik .uwaga { font-size: 13.5px; color: #9CA2A9; }
+
+/* cennik */
+.cena { font: 800 42px/1 var(--naglowki); font-variant-numeric: tabular-nums; }
+.karta ul { margin: 6px 0 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 15.5px; }
+.karta.pro { background: var(--grafit); color: var(--papier); border-color: var(--grafit); }
+.karta.pro p { color: #C6CACF; }
+.karta.pro .cena { color: var(--sygnal); }
+.plakietka { align-self: flex-start; background: var(--sygnal); color: var(--grafit); font-weight: 700; font-size: 13px; padding: 4px 12px; border-radius: 999px; }
+.drobne { font-size: 14px; color: var(--stal); margin-top: 16px; }
+
+/* oś wdrożenia */
+.krok { border-top: 5px solid var(--sygnal); padding-top: 16px; display: flex; flex-direction: column; gap: 6px; }
+.krok p { color: var(--stal); font-size: 16px; }
+
+/* pytania */
+details { border-bottom: 1.5px solid var(--linia); padding: 16px 0; }
+details summary { font: 700 20px/1.25 var(--naglowki); cursor: pointer; list-style-position: outside; }
+details p { margin-top: 10px; color: var(--stal); max-width: 70ch; }
+
+/* formularz audytu */
+.audyt { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(24px, 4vw, 56px); align-items: start; }
+.audyt-tekst { display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
+.audyt-tekst ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-weight: 500; }
+.kontakt { font: 800 24px/1.3 var(--naglowki); }
+.formularz { background: var(--papier); border: 2px solid var(--grafit); border-radius: 18px; padding: 26px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.formularz .cala { grid-column: 1 / -1; }
+.formularz label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 15px; }
+.formularz input, .formularz select, .formularz textarea { font: 400 17px/1.3 var(--tekst); color: var(--grafit); background: var(--papier); border: 1.5px solid #8C9198; border-radius: 10px; padding: 12px 14px; min-height: 48px; width: 100%; }
+.formularz textarea { min-height: 96px; resize: vertical; }
+.formularz .pulapka { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.formularz .info { font-size: 13.5px; color: var(--stal); }
+.komunikat { border-radius: 12px; padding: 14px 16px; font-weight: 600; }
+.komunikat.ok { background: #DDF3E1; color: #124B22; }
+.komunikat.blad { background: #FBE1DD; color: #7A1D10; }
+.komunikat.podglad { background: var(--sygnal-jasny); color: var(--grafit); }
+[hidden] { display: none !important; }
+
+/* stopka */
+.stopka { background: var(--grafit); color: #C6CACF; padding: 40px 0; font-size: 14.5px; }
+.stopka .kol { display: flex; flex-direction: column; gap: 18px; }
+.stopka svg { height: 36px; width: auto; align-self: flex-start; }
+.stopka details { border-color: #363A40; }
+.stopka details summary { font: 600 15px/1.3 var(--tekst); color: var(--papier); }
+.stopka details p { color: #C6CACF; font-size: 14px; }
+
+@media (max-width: 900px) {
+  .hero .kol, .kalk, .audyt { grid-template-columns: minmax(0, 1fr); }
+  .s3, .s4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gora nav a:not(.przycisk) { display: none; }
+}
+@media (max-width: 600px) {
+  .s2, .s3, .s4, .formularz { grid-template-columns: minmax(0, 1fr); }
+  body { font-size: 16px; }
+}
+</style>
+</head>
+<body>
+
+<header class="gora">
+  <div class="kol">
+    <a href="#start" aria-label="Odzew, początek strony">%%LOGO_ZOLTE%%</a>
+    <nav aria-label="Główna">
+      <a href="#sekretarka">Przetestuj sekretarkę</a>
+      <a href="#kalkulator">Kalkulator strat</a>
+      <a href="#jak">Jak to działa</a>
+      <a href="#cennik">Cennik</a>
+      <a class="przycisk" href="#audyt">Umów audyt</a>
+    </nav>
+  </div>
+</header>
+
+<main id="start">
+
+<section class="hero">
+  <div class="kol">
+    <div class="hero-tekst">
+      <span class="etykieta" style="background:var(--grafit);color:var(--sygnal)">Kielce i świętokrzyskie</span>
+      <h1>Żadne zapytanie nie przepada.</h1>
+      <p class="lead">Dla firm, które sprzedają na wycenę: okna i drzwi, kuchnie na wymiar, klimatyzacja i pompy ciepła, łazienki. Każde zapytanie dostaje odpowiedź w minutę, a każda wycena przypomnienie.</p>
+      <div class="hero-akcje">
+        <a class="przycisk" href="#audyt">Umów bezpłatny audyt</a>
+        <a class="przycisk jasny" href="#kalkulator">Policz, ile tracisz</a>
+      </div>
+    </div>
+    <div class="watek" aria-label="Przykład: zapytanie w sobotę wieczorem">
+      <p class="czas">Sobota, 20:14</p>
+      <div class="dymek"><small>Formularz na stronie</small>Dzień dobry, ile kosztuje wymiana 3 okien w domu jednorodzinnym?</div>
+      <div class="dymek nasz"><small>Odpowiedź po minucie, 20:15</small>Dzień dobry, dziękujemy za zapytanie. Odezwiemy się w poniedziałek do 10:00. Zdjęcia i wymiary można dodać tutaj: [link]</div>
+      <p class="puenta">Ty masz wolne. Klient wie, że ktoś się nim zajął.</p>
+    </div>
+  </div>
+</section>
+
+
+<section class="pas ciemny" id="sekretarka">
+  <div class="kol sekretarka">
+    <div class="sekretarka-tekst">
+      <span class="etykieta">Przetestuj na żywo</span>
+      <h2>Przetestuj, jak działa nasza automatyczna sekretarka</h2>
+      <p class="lead">Zadzwoń pod numer poniżej. Odbierze Ola, wirtualna asystentka. Powiedz, czym zajmuje się Twoja firma, a pokaże, jak odbierałaby telefony od Twoich klientów.</p>
+      <div class="zadzwon">
+        <span class="zadzwon-napis">Zadzwoń pod numer</span>
+        <a class="numer-demo brak" id="numer-demo" href="#sekretarka">Numer uruchamiamy</a>
+        <span class="zadzwon-napis" id="numer-opis">Odbiera całą dobę, także w weekend. Rozmowa trwa około pięciu minut.</span>
+      </div>
+      <button class="przycisk zolty-p" type="button" id="rozmowa-start" hidden>Albo porozmawiaj przez przeglądarkę</button>
+      <ol class="wskazowki">
+        <li><b>Przedstaw się:</b> „Mam firmę z oknami” albo kuchniami, klimatyzacją, łazienkami.</li>
+        <li><b>Zagraj swojego klienta:</b> zapytaj o cenę, przerwij jej w pół zdania, poproś o człowieka.</li>
+        <li><b>Na koniec zapytaj:</b> „Ile to kosztuje i od kiedy może działać u mnie?”</li>
+      </ol>
+      <p class="uwaga-ai">Ola na początku rozmowy mówi, że jest wirtualną asystentką. Tak wymagają przepisy o sztucznej inteligencji i tak robimy u każdego klienta.</p>
+    </div>
+    <div class="rozmowa" aria-label="Przykładowa rozmowa z wirtualną asystentką">
+      <div class="naglowek"><span class="awatar">O</span><div><b>Ola, Okna Demo Kielce</b><small>Przykładowa rozmowa · sobota, 19:42</small></div></div>
+      <div class="kwestia ola"><span class="kto">Ola</span><p>Dzień dobry, Okna Demo Kielce, z tej strony Ola, wirtualna asystentka. W czym mogę pomóc?</p></div>
+      <div class="kwestia klient"><span class="kto">Klient</span><p>Dzień dobry, chciałbym wymienić okna w domu. Ile to mniej więcej kosztuje?</p></div>
+      <div class="kwestia ola"><span class="kto">Ola</span><p>Jasne. Cena zależy od wymiarów i rodzaju okien, dlatego robimy bezpłatny pomiar. Ile okien chce Pan wymienić?</p></div>
+      <div class="kwestia klient"><span class="kto">Klient</span><p>Pięć, plus drzwi tarasowe. Dom w Morawicy.</p></div>
+      <div class="kwestia ola"><span class="kto">Ola</span><p>Mhm, już notuję. A jak mogę się do Pana zwracać?</p></div>
+      <div class="kwestia klient"><span class="kto">Klient</span><p>Tomasz.</p></div>
+      <div class="kwestia ola"><span class="kto">Ola</span><p>Dobrze, Panie Tomku. Czy mogę oddzwonić na numer, z którego Pan dzwoni?</p></div>
+      <div class="kwestia klient"><span class="kto">Klient</span><p>Tak, najlepiej w poniedziałek rano.</p></div>
+      <div class="kwestia ola"><span class="kto">Ola</span><p>To podsumuję: pięć okien i drzwi tarasowe w domu w Morawicy, oddzwaniamy w poniedziałek rano. Zgadza się? … Zapisałam. Za chwilę dostanie Pan SMS z potwierdzeniem.</p></div>
+      <div class="efekt">
+        <div><b>19:44 · SMS do klienta</b>Dziękujemy za rozmowę! Zgłoszenie przyjęte, oddzwonimy w poniedziałek rano.</div>
+        <div><b>19:44 · lejek sprzedaży</b>Tomasz, Morawica, 5 okien i drzwi tarasowe. Status: do kontaktu w poniedziałek.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pas">
+  <div class="kol">
+    <div class="naglowek-sekcji">
+      <span class="etykieta">Problem</span>
+      <h2>Zlecenia uciekają w czterech miejscach</h2>
+    </div>
+    <div class="siatka s4">
+      <div class="karta"><h3>Telefon w czasie montażu</h3><p>Klient dzwoni, nikt nie odbiera, więc wybiera następną firmę z listy.</p></div>
+      <div class="karta"><h3>Zapytanie po godzinach</h3><p>Wiadomość z soboty czeka do poniedziałku. Klient pytał w trzech miejscach.</p></div>
+      <div class="karta"><h3>Wycena robiona wieczorem</h3><p>Oferta wychodzi po kilku dniach, bo w ciągu dnia nie ma kiedy jej policzyć.</p></div>
+      <div class="karta"><h3>Cisza po wysłaniu oferty</h3><p>Nikt nie pyta o decyzję, więc zlecenie bierze ktoś, kto zapytał.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="pas ciemny">
+  <div class="kol">
+    <div class="naglowek-sekcji">
+      <span class="etykieta">Dlaczego szybkość</span>
+      <h2>Wygrywa ten, kto odpisze pierwszy</h2>
+    </div>
+    <div class="siatka s2">
+      <div class="karta"><span class="liczba">ok. 7×</span><p>większa szansa na rozmowę z klientem, gdy firma odezwie się w ciągu godziny od zapytania, niż gdy zrobi to godzinę później.</p><span class="zrodlo">Harvard Business Review, „The Short Life of Online Sales Leads”, 2011</span></div>
+      <div class="karta"><span class="liczba">23%</span><p>firm w tym samym badaniu nie odpowiedziało na zapytanie wcale.</p><span class="zrodlo">Harvard Business Review, 2011</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="pas beton" id="kalkulator">
+  <div class="kol">
+    <div class="naglowek-sekcji">
+      <span class="etykieta">Kalkulator strat</span>
+      <h2>Policz, ile kosztują Cię zapytania bez odpowiedzi</h2>
+      <p class="lead">Przesuń suwaki na liczby ze swojej firmy. Niczego nie zapisujemy ani nie wysyłamy.</p>
+    </div>
+    <div class="kalk">
+      <form id="kalk" onsubmit="return false">
+        <div class="pole"><label for="k-zap">Zapytania miesięcznie <output id="o-zap" for="k-zap"></output></label><input type="range" id="k-zap" min="5" max="200" step="5" value="40"></div>
+        <div class="pole"><label for="k-bez">Czekają na odpowiedź ponad godzinę <output id="o-bez" for="k-bez"></output></label><input type="range" id="k-bez" min="0" max="80" step="5" value="25"></div>
+        <div class="pole"><label for="k-odch">Z czekających idzie do konkurencji <output id="o-odch" for="k-odch"></output></label><input type="range" id="k-odch" min="10" max="90" step="5" value="50"></div>
+        <div class="pole"><label for="k-skut">Skuteczność Twoich ofert <output id="o-skut" for="k-skut"></output></label><input type="range" id="k-skut" min="5" max="60" step="5" value="20"></div>
+        <div class="pole"><label for="k-wart">Średnia wartość zlecenia <output id="o-wart" for="k-wart"></output></label><input type="range" id="k-wart" min="2000" max="60000" step="1000" value="15000"></div>
+      </form>
+      <div class="wynik" aria-live="polite">
+        <div>
+          <p style="color:#C6CACF">Szacowana strata w roku</p>
+          <p class="duza" id="w-strata"></p>
+        </div>
+        <dl>
+          <dt>Zapytania bez szybkiej odpowiedzi</dt><dd id="w-bez"></dd>
+          <dt>Utracone zlecenia w roku</dt><dd id="w-zlec"></dd>
+          <dt>Sekretarka + Zapytania w pierwszym roku</dt><dd>9 278 zł netto</dd>
+          <dt>Zwraca się po</dt><dd id="w-zwrot"></dd>
+        </dl>
+        <p class="uwaga">To szacunek na Twoich założeniach, a nie obietnica wyniku. Prawdziwe liczby policzymy razem na audycie, z rejestru połączeń i skrzynki.</p>
+        <a class="przycisk zolty-p" href="#audyt">Sprawdź to u siebie</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pas" id="jak">
+  <div class="kol">
+    <div class="naglowek-sekcji">
+      <span class="etykieta">Jak to działa</span>
+      <h2>Od zapytania do podpisanej umowy</h2>
+      <p class="lead">Nie zmieniasz programów ani numeru telefonu. Podłączamy się do tego, czego już używasz.</p>
+    </div>
+    <div class="siatka s3">
+      <div class="karta"><div class="wiersz"><span class="numer">1</span><h3>Zapytanie</h3></div><p>Strona, poczta, Messenger i telefon trafiają w jedno miejsce.</p></div>
+      <div class="karta"><div class="wiersz"><span class="numer">2</span><h3>Odpowiedź</h3></div><p>Po minucie klient dostaje SMS lub e-mail, także w nocy i w weekend.</p></div>
+      <div class="karta"><div class="wiersz"><span class="numer">3</span><h3>Nieodebrany telefon</h3></div><p>Dzwoniący dostaje SMS, a biuro przypomnienie, żeby oddzwonić.</p></div>
+      <div class="karta"><div class="wiersz"><span class="numer">4</span><h3>Pomiar i wycena</h3></div><p>Klient wybiera termin pomiaru, a szkic wyceny powstaje z Twojego cennika. Wysyłasz go po swojej akceptacji.</p></div>
+      <div class="karta"><div class="wiersz"><span class="numer">5</span><h3>Przypomnienia</h3></div><p>Po wysłaniu oferty system pyta o decyzję w 2., 5. i 10. dniu.</p></div>
+      <div class="karta"><div class="wiersz"><span class="numer">6</span><h3>Opinia</h3></div><p>Dzień po montażu każdy klient dostaje prośbę o opinię w Google.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="pas beton" id="cennik">
+  <div class="kol">
+    <div class="naglowek-sekcji">
+      <span class="etykieta">Cennik</span>
+      <h2>Trzy pakiety, jedna zasada: płacisz za działający system</h2>
+    </div>
+    <div class="siatka s3">
+      <div class="karta"><h3>Sekretarka</h3><span class="cena">449 zł</span><p>miesięcznie · wdrożenie 990 zł</p><ul><li>Ola odbiera na Twoim numerze całą dobę</li><li>150 minut rozmów w miesiącu</li><li>SMS do klienta z potwierdzeniem</li><li>Zgłoszenie na Twój telefon i listę kontaktów</li><li>Raport co miesiąc</li></ul></div>
+      <div class="karta pro"><span class="plakietka">Polecany</span><h3>Sekretarka + Zapytania</h3><span class="cena">649 zł</span><p>miesięcznie · wdrożenie 1 490 zł</p><ul><li>Wszystko z pakietu Sekretarka</li><li>300 minut rozmów w miesiącu</li><li>Odpowiedź na zapytanie ze strony w 60 sekund</li><li>Przypomnienia po wysłaniu oferty</li><li>Prośba o opinię po montażu</li><li>Raport co tydzień</li></ul></div>
+      <div class="karta"><h3>Biuro</h3><span class="cena">od 990 zł</span><p>miesięcznie · wdrożenie od 3 900 zł</p><ul><li>Wszystko z pakietu Sekretarka + Zapytania</li><li>600 minut rozmów, do trzech numerów</li><li>Kalendarz pomiarów z przypomnieniami</li><li>Szkic wyceny z Twojego cennika</li><li>Automatyzacje robione na zamówienie</li></ul></div>
+    </div>
+    <p class="drobne">Ceny netto, doliczamy 23% VAT. Abonament obejmuje numer, minuty rozmów, SMS-y, serwer, opiekę i poprawki. Wdrożenie płacisz raz. Każda minuta ponad pakiet kosztuje 1,20 zł. Minimum 3 miesiące, potem wypowiedzenie z miesięcznym wyprzedzeniem.</p>
+  </div>
+</section>
+
+<section class="pas zolty">
+  <div class="kol">
+    <div class="naglowek-sekcji">
+      <span class="etykieta">Gwarancja</span>
+      <h2>Odpowiedź w mniej niż 5 minut albo zwrot wdrożenia</h2>
+      <p class="lead" style="color:var(--grafit);font-weight:500">Jeśli w 60 dni od startu średni czas pierwszej odpowiedzi na zapytanie nie spadnie poniżej 5 minut, zwracamy 100% opłaty za wdrożenie. Czas liczymy z Twojego lejka, nie z naszych deklaracji.</p>
+    </div>
+    <div class="siatka s4">
+      <div class="krok" style="border-color:var(--grafit)"><h3>Dzień 0</h3><p style="color:var(--grafit)">Umowa i spotkanie startowe, 45 minut</p></div>
+      <div class="krok" style="border-color:var(--grafit)"><h3>Dni 1–7</h3><p style="color:var(--grafit)">Podłączamy kanały i Twoje treści</p></div>
+      <div class="krok" style="border-color:var(--grafit)"><h3>Dni 8–13</h3><p style="color:var(--grafit)">Testy na prawdziwych zapytaniach</p></div>
+      <div class="krok" style="border-color:var(--grafit)"><h3>Dzień 14</h3><p style="color:var(--grafit)">Start i szkolenie zespołu, 45 minut</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="pas">
+  <div class="kol">
+    <div class="naglowek-sekcji">
+      <span class="etykieta">Pytania</span>
+      <h2>O co pytają właściciele</h2>
+    </div>
+    <details><summary>Nie mam czasu na wdrożenia. Ile to zajmie mnie?</summary><p>Dwa spotkania po 45 minut: start i odbiór. Resztę robimy my. System ma Ci oddać czas, a nie go zabrać.</p></details>
+    <details><summary>Czy automat nie napisze klientowi głupot?</summary><p>Automat wysyła tylko treści, które wcześniej zatwierdzisz: potwierdzenie, pytania, przypomnienia. Nie podaje cen ani terminów montażu. Wycenę zawsze wysyłasz Ty.</p></details>
+    <details><summary>Moi klienci wolą dzwonić.</summary><p>Telefon zostaje. System łapie te połączenia, których nie odbierzesz, i w minutę odpisuje SMS-em, że oddzwonisz.</p></details>
+    <details><summary>Mamy już swój program. Trzeba go zmieniać?</summary><p>Nie. Podłączamy się do poczty, strony i telefonu, których już używasz. Lejek sprzedaży to zwykły arkusz, który widzisz na telefonie.</p></details>
+    <details><summary>Co z danymi klientów?</summary><p>Każda firma ma własny serwer w Unii Europejskiej i własne konta. Podpisujemy umowę powierzenia przetwarzania danych. Przy rozstaniu przekazujemy dostęp i eksport.</p></details>
+    <details><summary>Czy system pisze do ludzi, którzy o nic nie pytali?</summary><p>Nie. Odpowiada wyłącznie osobom, które same się zgłosiły, i tylko w sprawie ich zapytania.</p></details>
+  </div>
+</section>
+
+<section class="pas zolty" id="audyt">
+  <div class="kol audyt">
+    <div class="audyt-tekst">
+      <span class="etykieta">Bezpłatny audyt</span>
+      <h2>30 minut w Twojej firmie</h2>
+      <ul>
+        <li>Liczymy zapytania i nieodebrane telefony z ostatniego tygodnia</li>
+        <li>Pokazujemy demo na Twoim telefonie</li>
+        <li>Zostawiamy wynik na jednej stronie, bez zobowiązań</li>
+      </ul>
+      <p class="kontakt" id="kontakt-tekst" hidden></p>
+    </div>
+    <form class="formularz" id="formularz" name="audyt" method="POST" data-netlify="true" netlify-honeypot="website" novalidate>
+      <input type="hidden" name="form-name" value="audyt">
+      <label>Imię<input id="f-imie" name="imie" autocomplete="given-name" required maxlength="60"></label>
+      <label>Firma<input id="f-firma" name="firma" autocomplete="organization" maxlength="80"></label>
+      <label>Telefon<input id="f-telefon" name="telefon" type="tel" autocomplete="tel" inputmode="tel" required maxlength="20"></label>
+      <label>E-mail (opcjonalnie)<input id="f-email" name="email" type="email" autocomplete="email" maxlength="120"></label>
+      <label class="cala">Branża<select id="f-branza" name="branza"><option>Okna i drzwi</option><option>Kuchnie i meble na wymiar</option><option>Klimatyzacja, pompy ciepła, fotowoltaika</option><option>Łazienki, podłogi, wykończenia</option><option>Bramy i ogrodzenia</option><option>Inna</option></select></label>
+      <label class="cala">Kiedy najlepiej zadzwonić? (opcjonalnie)<textarea id="f-wiadomosc" name="wiadomosc" maxlength="600"></textarea></label>
+      <label class="pulapka" aria-hidden="true">Strona www<input id="f-website" name="website" tabindex="-1" autocomplete="off"></label>
+      <p class="info cala">Wysyłając formularz, prosisz o kontakt w sprawie audytu. Twoje dane wykorzystamy tylko do tego. Szczegóły znajdziesz w polityce prywatności na dole strony.</p>
+      <button class="przycisk cala" type="submit" id="f-wyslij">Proszę o kontakt</button>
+      <p class="komunikat cala" id="f-komunikat" role="status" hidden></p>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<footer class="stopka">
+  <div class="kol">
+    %%LOGO_CIEMNE%%
+    <p>Odzew. Automatyzacje dla firm, które sprzedają na wycenę. Kielce i województwo świętokrzyskie.</p>
+    <p id="stopka-kontakt" hidden></p>
+    <details id="prywatnosc">
+      <summary>Polityka prywatności</summary>
+      <p><b>Administrator danych:</b> <span id="pp-administrator">[uzupełnij dane firmy w KONFIG.administrator]</span>.</p>
+      <p><b>Jakie dane i po co:</b> imię, nazwa firmy, telefon, e-mail i treść wiadomości z formularza. Używamy ich wyłącznie po to, żeby odpowiedzieć na Twoją prośbę o kontakt i umówić audyt (art. 6 ust. 1 lit. b i f RODO).</p>
+      <p><b>Komu je powierzamy:</b> dostawcom, z których korzystamy przy obsłudze zgłoszeń: hostingu i serwera w Unii Europejskiej, poczty elektronicznej i bramki SMS. Nie sprzedajemy danych i nie przekazujemy ich do celów reklamowych.</p>
+      <p><b>Jak długo:</b> do 12 miesięcy od ostatniego kontaktu, a jeśli zostaniesz klientem, przez czas trwania umowy i okres wymagany przepisami.</p>
+      <p><b>Twoje prawa:</b> dostęp do danych, sprostowanie, usunięcie, ograniczenie przetwarzania, sprzeciw oraz skarga do Prezesa Urzędu Ochrony Danych Osobowych. Wystarczy wiadomość na adres podany w kontakcie.</p>
+      <p><b>Pliki cookie i śledzenie:</b> ta strona nie używa plików cookie do analityki ani reklam. Czcionki są wczytywane z naszego serwera. Kalkulator liczy wszystko w Twojej przeglądarce.</p>
+    </details>
+  </div>
+</footer>
+
+<script>
+(function () {
+  const zl = n => Math.round(n).toLocaleString('pl-PL').replace(/ | /g, ' ') + ' zł';
+  const el = id => document.getElementById(id);
+
+  // ----- kalkulator strat -----
+  function policz() {
+    const zap = +el('k-zap').value, bez = +el('k-bez').value / 100, odch = +el('k-odch').value / 100,
+          skut = +el('k-skut').value / 100, wart = +el('k-wart').value;
+    el('o-zap').textContent = zap;
+    el('o-bez').textContent = Math.round(bez * 100) + '%';
+    el('o-odch').textContent = Math.round(odch * 100) + '%';
+    el('o-skut').textContent = Math.round(skut * 100) + '%';
+    el('o-wart').textContent = zl(wart);
+    const zlecenia = zap * bez * odch * skut * 12;
+    const strata = zlecenia * wart;
+    el('w-strata').textContent = zl(strata);
+    el('w-bez').textContent = Math.round(zap * bez) + ' miesięcznie';
+    el('w-zlec').textContent = (Math.round(zlecenia * 10) / 10).toLocaleString('pl-PL');
+    const ile = Math.ceil(9278 / wart);
+    el('w-zwrot').textContent = ile + (ile === 1 ? ' uratowanym zleceniu' : ' uratowanych zleceniach');
+  }
+  document.querySelectorAll('#kalk input').forEach(i => i.addEventListener('input', policz));
+  policz();
+
+  // ----- dane kontaktowe z konfiguracji -----
+  const czesci = [];
+  if (KONFIG.telefon) czesci.push('tel. ' + KONFIG.telefon);
+  if (KONFIG.email) czesci.push(KONFIG.email);
+  if (czesci.length) {
+    el('kontakt-tekst').textContent = 'Wolisz zadzwonić? ' + czesci.join(' · ');
+    el('kontakt-tekst').hidden = false;
+    el('stopka-kontakt').textContent = 'Kontakt: ' + czesci.join(' · ');
+    el('stopka-kontakt').hidden = false;
+  }
+  if (KONFIG.administrator) el('pp-administrator').textContent = KONFIG.administrator;
+
+
+  // ----- sekretarka demo -----
+  if (KONFIG.telefonDemo) {
+    const n = el('numer-demo');
+    n.textContent = KONFIG.telefonDemo;
+    n.href = 'tel:+48' + KONFIG.telefonDemo.replace(/\D/g, '').replace(/^48(?=\d{9}$)/, '');
+    n.classList.remove('brak');
+    // Same zera oznaczają numer przykładowy: strona mówi o tym wprost, żeby nikt nie dzwonił w próżnię.
+    if (/^0+$/.test(KONFIG.telefonDemo.replace(/\D/g, ''))) { n.removeAttribute('href'); el('numer-opis').innerHTML = '<b>To numer przykładowy.</b> Prawdziwy pojawi się tu po uruchomieniu linii.'; }
+  }
+  if (KONFIG.agentId) {
+    const b = el('rozmowa-start');
+    b.hidden = false;
+    b.addEventListener('click', function () {
+      if (!document.querySelector('elevenlabs-convai')) {
+        const w = document.createElement('elevenlabs-convai');
+        w.setAttribute('agent-id', KONFIG.agentId);
+        w.setAttribute('variant', 'expanded');
+        w.setAttribute('action-text', 'Porozmawiaj z Olą');
+        w.setAttribute('start-call-text', 'Zacznij rozmowę');
+        w.setAttribute('end-call-text', 'Zakończ');
+        w.setAttribute('listening-text', 'Słucham…');
+        w.setAttribute('speaking-text', 'Ola mówi');
+        w.setAttribute('avatar-orb-color-1', '#FFC21A');
+        w.setAttribute('avatar-orb-color-2', '#16181B');
+        document.body.appendChild(w);
+        const sc = document.createElement('script');
+        sc.src = 'https://unpkg.com/@elevenlabs/convai-widget-embed';
+        sc.async = true;
+        document.body.appendChild(sc);
+      }
+      b.textContent = 'Okno rozmowy jest w prawym dolnym rogu';
+    });
+  }
+
+  // ----- formularz audytu -----
+  const f = el('formularz'), kom = el('f-komunikat'), btn = el('f-wyslij');
+  function pokaz(typ, tekst) { kom.className = 'komunikat cala ' + typ; kom.textContent = tekst; kom.hidden = false; }
+  f.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const imie = el('f-imie').value.trim(), tel = el('f-telefon').value.replace(/\D/g, '');
+    if (!imie) { pokaz('blad', 'Podaj imię, żebyśmy wiedzieli, o kogo zapytać.'); el('f-imie').focus(); return; }
+    if (tel.length < 9) { pokaz('blad', 'Podaj numer telefonu z 9 cyframi.'); el('f-telefon').focus(); return; }
+    const pola = {
+      imie: imie, telefon: el('f-telefon').value, email: el('f-email').value.trim(),
+      firma: el('f-firma').value.trim(), branza: el('f-branza').value,
+      wiadomosc: ['Audyt', el('f-firma').value.trim(), el('f-branza').value, el('f-wiadomosc').value.trim()].filter(Boolean).join(' | '),
+      zrodlo: 'Strona Odzew', website: el('f-website').value
+    };
+    // Bez adresu automatyzacji zgłoszenie zbiera hosting (Netlify Forms) i wysyła je e-mailem.
+    const naHosting = !KONFIG.webhook;
+    if (naHosting) pola['form-name'] = 'audyt';
+    btn.disabled = true; btn.textContent = 'Wysyłam…';
+    try {
+      const r = await fetch(naHosting ? '/' : KONFIG.webhook, { method: 'POST', headers: naHosting ? { 'Content-Type': 'application/x-www-form-urlencoded' } : undefined, body: naHosting ? new URLSearchParams(pola).toString() : new URLSearchParams(pola) });
+      if (!r.ok) throw new Error('Serwer odpowiedział kodem ' + r.status);
+      f.reset();
+      pokaz('ok', naHosting ? 'Dziękujemy! Zgłoszenie dotarło. Oddzwonimy, żeby umówić termin.' : 'Dziękujemy! Zgłoszenie dotarło. Za chwilę dostaniesz SMS z potwierdzeniem.');
+    } catch (err) {
+      pokaz('blad', 'Nie udało się wysłać zgłoszenia. Spróbuj ponownie' + (KONFIG.telefon ? ' albo zadzwoń: ' + KONFIG.telefon : '') + '.');
+    } finally { btn.disabled = false; btn.textContent = 'Proszę o kontakt'; }
+  });
+})();
+</script>
+</body>
+</html>
