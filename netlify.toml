@@ -2,6 +2,11 @@
 [build]
   publish = "public"
 
+# Małe funkcje serwerowe: powiadomienia o rozmowach Oli na Telegram.
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
 [[headers]]
   for = "/*"
   [headers.values]

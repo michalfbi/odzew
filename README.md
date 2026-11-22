@@ -16,3 +16,15 @@ W bloku `KONFIG` w `src/index.src.html`:
 - `administrator`: dane firmy do polityki prywatności (nazwa, adres, NIP),
 - `telefonDemo`: numer, pod którym odbiera sekretarka (teraz 41 230 67 85, numer z Zadarmy),
 - `webhook`: adres automatyzacji, gdy powstanie serwer. Puste pole oznacza, że zgłoszenia z formularza zbiera Netlify Forms.
+
+## Powiadomienia o rozmowach Oli na Telegram
+
+Po każdej rozmowie ElevenLabs wysyła dane na adres `https://odzew.tech/api/po-rozmowie`, a funkcja z `netlify/functions/po-rozmowie.mjs` przekazuje na Telegram podsumowanie, dane rozmówcy i transkrypcję.
+
+W Netlify (Project configuration → Environment variables) muszą być trzy zmienne:
+
+- `TELEGRAM_BOT_TOKEN`: token bota od @BotFather,
+- `TELEGRAM_CHAT_ID`: identyfikator czatu (bot poda go po otwarciu `https://odzew.tech/api/telegram-start`),
+- `ELEVENLABS_WEBHOOK_SECRET`: sekret pokazany przez ElevenLabs przy tworzeniu webhooka.
+
+Po zmianie zmiennych trzeba wdrożyć stronę ponownie. Test funkcji: `node test/po-rozmowie.test.mjs`.
