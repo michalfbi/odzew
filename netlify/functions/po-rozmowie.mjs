@@ -18,6 +18,14 @@ const ETYKIETY = {
   nastepny_krok: 'Następny krok', termin: 'Termin', gotowosc: 'Gotowość do zakupu', obiekcje: 'Obiekcje',
 };
 const KOLEJNOSC = Object.keys(ETYKIETY);
+// ElevenLabs przysyła kryteria oceny tylko z identyfikatorem, bez nazwy. Tu są nazwy kryteriów agentki Ola – Odzew (sprzedaż).
+// Nowe kryterium pokaże się jako „Kryterium N”, dopóki nie zostanie tu dopisane.
+const KRYTERIA = {
+  aitem_5901m7zxr4qnffqrg2k8hs5n071t: 'Pokaz w roli',
+  aitem_7801m7zxrp0yf2etbwc10tzb4vf3: 'Ustalony następny krok',
+  aitem_6801m7zxs5j4fstbsyfwb6n7y2pm: 'Tylko prawdziwe fakty',
+};
+const ZAKONCZENIA = [[/end_call/i, 'Ola zakończyła rozmowę po pożegnaniu'], [/client|user|remote/i, 'rozmówca się rozłączył'], [/timeout|silence|inactiv/i, 'cisza na linii'], [/max.*duration|duration/i, 'przekroczony limit czasu rozmowy']];
 
 export function podpisPoprawny(naglowek, tresc, sekret, teraz = Date.now() / 1000) {
   if (!naglowek || !sekret) return false;
@@ -38,7 +46,7 @@ export function zbudujWiadomosci(d) {
   const meta = d.metadata || {}, analiza = d.analysis || {};
   const zmienne = (d.conversation_initiation_client_data || {}).dynamic_variables || {};
   const numer = (meta.phone_call || {}).external_number || zmienne.system__caller_id || '';
-  const naglowek = ['📞 Nowa rozmowa Oli'];
+  const naglowek = ['📞 Nowa rozmowa' + (d.agent_name ? ' · ' + d.agent_name : ' Oli')];
   const kiedy = [meta.start_time_unix_secs ? data(meta.start_time_unix_secs) : '', meta.call_duration_secs != null ? czas(meta.call_duration_secs) : ''].filter(Boolean).join(' · ');
   if (kiedy) naglowek.push(kiedy);
   naglowek.push(numer ? `Numer rozmówcy: ${numer}` : 'Numer rozmówcy: nieznany (rozmowa z przeglądarki albo numer zastrzeżony)');
@@ -47,14 +55,19 @@ export function zbudujWiadomosci(d) {
   const podsumowanie = [analiza.call_summary_title, analiza.transcript_summary].filter(v => !pusty(v)).join('\n');
   if (podsumowanie) czesci.push('PODSUMOWANIE\n' + podsumowanie);
 
-  const dane = analiza.data_collection_results || {};
-  const klucze = [...KOLEJNOSC.filter(k => k in dane), ...Object.keys(dane).filter(k => !KOLEJNOSC.includes(k))];
-  const linie = klucze.filter(k => !pusty(dane[k] && dane[k].value)).map(k => `• ${ETYKIETY[k] || k}: ${dane[k].value}`);
+  // Wpisy mają klucz-identyfikator (aitem_…) i pole name z nazwą nadaną w panelu, np. „imie”.
+  const dane = Object.entries(analiza.data_collection_results || {}).map(([klucz, w]) => ({ nazwa: (w && w.name) || klucz, wartosc: w && w.value }));
+  const miejsce = n => { const i = KOLEJNOSC.indexOf(n); return i < 0 ? KOLEJNOSC.length : i; };
+  const linie = dane.filter(x => !pusty(x.wartosc)).sort((x, y) => miejsce(x.nazwa) - miejsce(y.nazwa)).map(x => `• ${ETYKIETY[x.nazwa] || x.nazwa}: ${x.wartosc}`);
   if (linie.length) czesci.push('NAJWAŻNIEJSZE\n' + linie.join('\n'));
 
-  const oceny = Object.values(analiza.evaluation_criteria_results || {}).map(o => `• ${o.criteria_id || 'kryterium'}: ${wynik(o.result)}`);
+  const skroc = (t, n = 220) => { t = String(t || '').trim(); return t.length > n ? t.slice(0, n).trimEnd() + '…' : t; };
+  const oceny = Object.values(analiza.evaluation_criteria_results || {}).map((o, i) => {
+    const nazwa = KRYTERIA[o.criteria_id] || (/^aitem_/.test(o.criteria_id || '') || !o.criteria_id ? `Kryterium ${i + 1}` : o.criteria_id);
+    return `• ${nazwa}: ${wynik(o.result)}` + (o.result !== 'success' && o.rationale ? ` (${skroc(o.rationale)})` : '');
+  });
   const ocena = [`Rozmowa udana: ${wynik(analiza.call_successful)}`, ...oceny];
-  if (meta.termination_reason) ocena.push(`Zakończenie: ${meta.termination_reason}`);
+  if (meta.termination_reason) { const z = ZAKONCZENIA.find(([w]) => w.test(meta.termination_reason)); ocena.push(`Zakończenie: ${z ? z[1] : meta.termination_reason}`); }
   czesci.push('OCENA\n' + ocena.join('\n'));
 
   const rozmowa = (d.transcript || []).filter(w => !pusty(w.message)).map(w => `${w.role === 'agent' ? 'Ola' : 'Rozmówca'}: ${String(w.message).trim()}`);
@@ -92,14 +105,6 @@ export default async function obsluz(req) {
   let zdarzenie;
   try { zdarzenie = JSON.parse(tresc); } catch { return new Response('Zła treść', { status: 400 }); }
   if (zdarzenie.type !== 'post_call_transcription') return new Response('Pominięto', { status: 200 });
-  // Tymczasowa diagnostyka: sama budowa pól analizy (nazwy pól i krótkie wartości), bez transkrypcji.
-  try {
-    const skroc = v => typeof v === 'string' ? (v.length > 60 ? v.slice(0, 60) + '…' : v) : v;
-    const szkielet = (o, g = 0) => o && typeof o === 'object' ? (g > 3 ? '…' : Array.isArray(o) ? o.slice(0, 12).map(x => szkielet(x, g + 1)) : Object.fromEntries(Object.entries(o).map(([k, v]) => [k, szkielet(v, g + 1)]))) : skroc(o);
-    const an = (zdarzenie.data || {}).analysis || {};
-    console.log('BUDOWA_ANALIZY ' + JSON.stringify(szkielet(Object.fromEntries(Object.entries(an).filter(([k]) => k !== 'transcript_summary')))));
-    console.log('POLA_DANYCH ' + JSON.stringify(Object.keys(zdarzenie.data || {})));
-  } catch (e) { console.error('diagnostyka', e.message); }
   try {
     await wyslijNaTelegram(token, czat, zbudujWiadomosci(zdarzenie.data || {}));
   } catch (e) { console.error(e.message); return new Response('Nie udało się wysłać na Telegram', { status: 502 }); }
