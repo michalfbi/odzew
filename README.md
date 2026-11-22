@@ -14,5 +14,5 @@ W bloku `KONFIG` w `src/index.src.html`:
 
 - `telefon` i `email`: kontakt w stopce,
 - `administrator`: dane firmy do polityki prywatności (nazwa, adres, NIP),
-- `telefonDemo`: prawdziwy numer sekretarki zamiast `000 000 000`,
+- `telefonDemo`: numer, pod którym odbiera sekretarka (teraz 727 705 664),
 - `webhook`: adres automatyzacji, gdy powstanie serwer. Puste pole oznacza, że zgłoszenia z formularza zbiera Netlify Forms.
