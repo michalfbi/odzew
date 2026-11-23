@@ -8,6 +8,10 @@ Strona Odzew. Netlify publikuje folder `public/`.
 2. Uruchom `python3 src/zbuduj.py`. Skrypt wkleja czcionki i logo i zapisuje `public/index.html`.
 3. Wyślij zmiany na GitHuba. Netlify opublikuje je sam.
 
+## Film na górze strony
+
+Film leży w `public/wideo/odzew-film.mp4` (wersja zmniejszona pod stronę, ok. 8 MB), a obrazek widoczny przed odtworzeniem w `public/wideo/odzew-film-plakat.jpg`. Żeby wymienić film, podmień oba pliki pod tymi samymi nazwami.
+
 ## Co uzupełnić przed pokazaniem strony klientom
 
 W bloku `KONFIG` w `src/index.src.html`:

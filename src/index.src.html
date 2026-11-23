@@ -78,17 +78,20 @@ a { color: inherit; }
 
 /* hero */
 .hero { background: var(--sygnal); padding: clamp(40px, 6vw, 80px) 0 clamp(48px, 7vw, 88px); }
-.hero .kol { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: clamp(28px, 5vw, 64px); align-items: center; }
+.hero .kol { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 64px); align-items: center; }
 .hero-tekst { display: flex; flex-direction: column; gap: 24px; align-items: flex-start; }
 .hero-tekst .lead { color: var(--grafit); font-weight: 500; }
 .hero-akcje { display: flex; gap: 12px; flex-wrap: wrap; }
-.watek { background: var(--grafit); color: var(--papier); border-radius: 26px; padding: 24px; display: flex; flex-direction: column; gap: 14px; box-shadow: 10px 10px 0 rgba(22, 24, 27, 0.18); }
-.watek .czas { font: 700 18px/1 var(--naglowki); color: var(--sygnal); }
-.dymek { max-width: 88%; padding: 14px 16px; border-radius: 18px 18px 18px 6px; background: #2B2F34; font-size: 15.5px; line-height: 1.45; }
-.dymek small { display: block; font-size: 12.5px; color: #B9BEC4; margin-bottom: 4px; }
-.dymek.nasz { align-self: flex-end; background: var(--sygnal); color: var(--grafit); border-radius: 18px 18px 6px 18px; }
-.dymek.nasz small { color: #4A3A00; }
-.watek .puenta { font: 700 19px/1.2 var(--naglowki); padding-top: 6px; }
+.film { position: relative; margin: 0; background: var(--grafit); border-radius: 22px; overflow: hidden; aspect-ratio: 16 / 9; box-shadow: 10px 10px 0 rgba(22, 24, 27, 0.18); }
+.film video { display: block; width: 100%; height: 100%; object-fit: cover; background: var(--grafit); }
+.film-start { position: absolute; inset: 0; width: 100%; display: flex; align-items: flex-end; justify-content: flex-start; padding: clamp(12px, 2vw, 18px); border: 0; background: transparent; cursor: pointer; }
+.film-start span { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 8px 20px 8px 8px; border-radius: 999px; background: var(--sygnal); color: var(--grafit); font: 700 17px/1 var(--naglowki); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35); transition: transform 0.15s ease; }
+.film-start[hidden] { display: none; }
+.film-start svg { width: 34px; height: 34px; flex-shrink: 0; }
+.film-start:hover span { transform: scale(1.04); }
+.film-start:focus-visible { outline-offset: -6px; outline-color: var(--sygnal); border-radius: 22px; }
+@media (prefers-reduced-motion: reduce) { .film-start span { transition: none; } }
+@media (max-width: 520px) { .film-start span { min-height: 40px; padding: 6px 16px 6px 6px; font-size: 15px; } .film-start svg { width: 28px; height: 28px; } }
 
 
 /* sekretarka demo */
@@ -228,12 +231,15 @@ details p { margin-top: 10px; color: var(--stal); max-width: 70ch; }
         <a class="przycisk jasny" href="#kalkulator">Policz, ile tracisz</a>
       </div>
     </div>
-    <div class="watek" aria-label="Przykład: zapytanie w sobotę wieczorem">
-      <p class="czas">Sobota, 20:14</p>
-      <div class="dymek"><small>Formularz na stronie</small>Dzień dobry, ile kosztuje wymiana 3 okien w domu jednorodzinnym?</div>
-      <div class="dymek nasz"><small>Odpowiedź po minucie, 20:15</small>Dzień dobry, dziękujemy za zapytanie. Odezwiemy się w poniedziałek do 10:00. Zdjęcia i wymiary można dodać tutaj: [link]</div>
-      <p class="puenta">Ty masz wolne. Klient wie, że ktoś się nim zajął.</p>
-    </div>
+    <figure class="film">
+      <video id="film" controls playsinline preload="none" poster="/wideo/odzew-film-plakat.jpg" aria-label="Film o Odzewie: jak wirtualny asystent odbiera telefon, 2 minuty, z napisami">
+        <source src="/wideo/odzew-film.mp4" type="video/mp4">
+        <a href="/wideo/odzew-film.mp4">Obejrzyj film o Odzewie (MP4, 2 minuty)</a>
+      </video>
+      <button class="film-start" type="button" id="film-start" hidden aria-label="Odtwórz film, 2 minuty">
+        <span><svg viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="17" fill="#16181B"/><path d="M13.5 10.5v13l10-6.5z" fill="#FFC21A"/></svg>Obejrzyj film · 2 min</span>
+      </button>
+    </figure>
   </div>
 </section>
 
@@ -452,6 +458,15 @@ details p { margin-top: 10px; color: var(--stal); max-width: 70ch; }
 (function () {
   const zl = n => Math.round(n).toLocaleString('pl-PL').replace(/ | /g, ' ') + ' zł';
   const el = id => document.getElementById(id);
+
+  // ----- film na górze strony: plakat z przyciskiem, po kliknięciu zwykły odtwarzacz z dźwiękiem -----
+  const film = el('film'), filmStart = el('film-start');
+  if (film && filmStart) {
+    film.controls = false; filmStart.hidden = false;
+    const wlacz = () => { filmStart.hidden = true; film.controls = true; };
+    filmStart.addEventListener('click', () => { wlacz(); const p = film.play(); if (p) p.catch(() => {}); film.focus(); });
+    film.addEventListener('play', wlacz);
+  }
 
   // ----- kalkulator strat -----
   function policz() {
