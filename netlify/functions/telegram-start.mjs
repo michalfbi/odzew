@@ -19,6 +19,6 @@ export default async function obsluz() {
     return odp(`Bot ${nazwa} nie dostał jeszcze żadnej wiadomości. Otwórz tego bota w Telegramie, naciśnij Start i odśwież tę stronę.`, 404);
   }
   const id = wpisy[wpisy.length - 1].chat.id;
-  const w = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: id, text: `Identyfikator tego czatu: ${id}\nWpisz go w Netlify jako TELEGRAM_CHAT_ID. Od tej chwili będą tu przychodzić podsumowania rozmów Oli.` }) });
+  const w = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: id, text: `Identyfikator tego czatu: ${id}\nWpisz go w Netlify jako TELEGRAM_CHAT_ID. Od tej chwili będą tu przychodzić podsumowania rozmów asystenta.` }) });
   return w.ok ? odp('Wysłałem identyfikator czatu na Telegram. Sprawdź rozmowę z botem.') : odp('Nie udało się wysłać wiadomości na Telegram.', 502);
 }

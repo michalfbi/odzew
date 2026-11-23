@@ -6,9 +6,9 @@ import obsluz, { podpisPoprawny, zbudujWiadomosci } from '../netlify/functions/p
 const sekret = 'wsec_test';
 const podpisz = (tresc, t = Math.floor(Date.now() / 1000)) => `t=${t},v0=${createHmac('sha256', sekret).update(`${t}.${tresc}`).digest('hex')}`;
 const zdarzenie = (transkrypt) => ({ type: 'post_call_transcription', event_timestamp: 1795346000, data: {
-  agent_id: 'agent_x', agent_name: 'Ola – Odzew (sprzedaż)', conversation_id: 'conv_123', status: 'done',
+  agent_id: 'agent_x', agent_name: 'Kamil – Odzew (pokaz)', conversation_id: 'conv_123', status: 'done',
   transcript: transkrypt || [
-    { role: 'agent', message: 'Dzień dobry, tu Ola, wirtualna asystentka firmy Odzew.', time_in_call_secs: 0 },
+    { role: 'agent', message: 'Dzień dobry, tu Kamil, wirtualny asystent firmy Odzew.', time_in_call_secs: 0 },
     { role: 'user', message: 'Dzień dobry, mam firmę z oknami w Kielcach.', time_in_call_secs: 6 },
     { role: 'agent', message: null, time_in_call_secs: 9 },
     { role: 'agent', message: 'To proponuję bezpłatny audyt. Wtorek czy środa?', time_in_call_secs: 40 },
@@ -32,13 +32,16 @@ assert.equal(podpisPoprawny('bzdura', tresc, sekret), false);
 // 2. Treść wiadomości
 const w = zbudujWiadomosci(zdarzenie().data);
 assert.equal(w.length, 1);
-for (const fragment of ['Numer rozmówcy: +48600100200', '3 min 12 s', 'Audyt umówiony na wtorek', '• Imię: Tomasz', '• Firma: Okna Demo', '• Termin: wtorek przed południem', '• inne_pole: x', 'Rozmowa udana: tak', '• Pokaz w roli: tak', '• Ustalony następny krok: nie (Nie ustalono terminu.)', '• Kryterium 3: nie wiadomo', 'Zakończenie: Ola zakończyła rozmowę po pożegnaniu', '📞 Nowa rozmowa · Ola – Odzew (sprzedaż)', 'Ola: Dzień dobry, tu Ola', 'Rozmówca: Dzień dobry, mam firmę', 'conv_123'])
+for (const fragment of ['Numer rozmówcy: +48600100200', '3 min 12 s', 'Audyt umówiony na wtorek', '• Imię: Tomasz', '• Firma: Okna Demo', '• Termin: wtorek przed południem', '• inne_pole: x', 'Rozmowa udana: tak', '• Pokaz w roli: tak', '• Ustalony następny krok: nie (Nie ustalono terminu.)', '• Kryterium 3: nie wiadomo', 'Zakończenie: asystent zakończył rozmowę po pożegnaniu', '📞 Nowa rozmowa · Kamil – Odzew (pokaz)', 'Kamil: Dzień dobry, tu Kamil', 'Rozmówca: Dzień dobry, mam firmę', 'conv_123'])
   assert.ok(w[0].includes(fragment), 'brak: ' + fragment);
 assert.ok(!w[0].includes('Obiekcje'), 'puste pole nie powinno się pokazać');
 assert.ok(!w[0].includes('aitem_'), 'identyfikatory nie powinny trafiać do wiadomości');
 assert.ok(!w[0].includes('Następny krok'), 'wartość „Brak” jest pomijana');
 assert.ok(w[0].indexOf('• Imię') < w[0].indexOf('• Termin'), 'kolejność pól');
-assert.ok(!w[0].includes('Ola: null'));
+assert.ok(!w[0].includes('Kamil: null'));
+assert.ok(w[0].includes('Kamil: Dzień dobry, tu Kamil'), 'imię z nazwy agenta jako etykieta w transkrypcji');
+const bezNazwy = zdarzenie().data; delete bezNazwy.agent_name;
+assert.ok(zbudujWiadomosci(bezNazwy)[0].includes('Asystent: Dzień dobry'), 'bez nazwy agenta etykieta to Asystent');
 
 // 3. Długa rozmowa dzieli się na części mieszczące się w limicie
 const dluga = Array.from({ length: 120 }, (_, i) => ({ role: i % 2 ? 'user' : 'agent', message: `Wypowiedź numer ${i}. ` + 'Lorem ipsum dolor sit amet. '.repeat(5) }));

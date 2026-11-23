@@ -1,4 +1,4 @@
-// Odbiera z ElevenLabs informację o zakończonej rozmowie Oli i wysyła ją na Telegram:
+// Odbiera z ElevenLabs informację o zakończonej rozmowie asystenta i wysyła ją na Telegram:
 // podsumowanie, najważniejsze dane rozmówcy i pełną transkrypcję.
 //
 // Ustawienia w Netlify (Project configuration → Environment variables):
@@ -18,14 +18,14 @@ const ETYKIETY = {
   nastepny_krok: 'Następny krok', termin: 'Termin', gotowosc: 'Gotowość do zakupu', obiekcje: 'Obiekcje',
 };
 const KOLEJNOSC = Object.keys(ETYKIETY);
-// ElevenLabs przysyła kryteria oceny tylko z identyfikatorem, bez nazwy. Tu są nazwy kryteriów agentki Ola – Odzew (sprzedaż).
+// ElevenLabs przysyła kryteria oceny tylko z identyfikatorem, bez nazwy. Tu są nazwy kryteriów agenta Kamil – Odzew (pokaz).
 // Nowe kryterium pokaże się jako „Kryterium N”, dopóki nie zostanie tu dopisane.
 const KRYTERIA = {
   aitem_5901m7zxr4qnffqrg2k8hs5n071t: 'Pokaz w roli',
   aitem_7801m7zxrp0yf2etbwc10tzb4vf3: 'Ustalony następny krok',
   aitem_6801m7zxs5j4fstbsyfwb6n7y2pm: 'Tylko prawdziwe fakty',
 };
-const ZAKONCZENIA = [[/end_call/i, 'Ola zakończyła rozmowę po pożegnaniu'], [/client|user|remote/i, 'rozmówca się rozłączył'], [/timeout|silence|inactiv/i, 'cisza na linii'], [/max.*duration|duration/i, 'przekroczony limit czasu rozmowy']];
+const ZAKONCZENIA = [[/end_call/i, 'asystent zakończył rozmowę po pożegnaniu'], [/client|user|remote/i, 'rozmówca się rozłączył'], [/timeout|silence|inactiv/i, 'cisza na linii'], [/max.*duration|duration/i, 'przekroczony limit czasu rozmowy']];
 
 export function podpisPoprawny(naglowek, tresc, sekret, teraz = Date.now() / 1000) {
   if (!naglowek || !sekret) return false;
@@ -46,7 +46,7 @@ export function zbudujWiadomosci(d) {
   const meta = d.metadata || {}, analiza = d.analysis || {};
   const zmienne = (d.conversation_initiation_client_data || {}).dynamic_variables || {};
   const numer = (meta.phone_call || {}).external_number || zmienne.system__caller_id || '';
-  const naglowek = ['📞 Nowa rozmowa' + (d.agent_name ? ' · ' + d.agent_name : ' Oli')];
+  const naglowek = ['📞 Nowa rozmowa' + (d.agent_name ? ' · ' + d.agent_name : '')];
   const kiedy = [meta.start_time_unix_secs ? data(meta.start_time_unix_secs) : '', meta.call_duration_secs != null ? czas(meta.call_duration_secs) : ''].filter(Boolean).join(' · ');
   if (kiedy) naglowek.push(kiedy);
   naglowek.push(numer ? `Numer rozmówcy: ${numer}` : 'Numer rozmówcy: nieznany (rozmowa z przeglądarki albo numer zastrzeżony)');
@@ -70,7 +70,9 @@ export function zbudujWiadomosci(d) {
   if (meta.termination_reason) { const z = ZAKONCZENIA.find(([w]) => w.test(meta.termination_reason)); ocena.push(`Zakończenie: ${z ? z[1] : meta.termination_reason}`); }
   czesci.push('OCENA\n' + ocena.join('\n'));
 
-  const rozmowa = (d.transcript || []).filter(w => !pusty(w.message)).map(w => `${w.role === 'agent' ? 'Ola' : 'Rozmówca'}: ${String(w.message).trim()}`);
+  // W transkrypcji agent występuje pod imieniem z nazwy agenta w ElevenLabs („Kamil – Odzew (pokaz)” → „Kamil”).
+  const imie = String(d.agent_name || '').split(/\s[–-]\s/)[0].trim() || 'Asystent';
+  const rozmowa = (d.transcript || []).filter(w => !pusty(w.message)).map(w => `${w.role === 'agent' ? imie : 'Rozmówca'}: ${String(w.message).trim()}`);
   czesci.push(rozmowa.length ? 'TRANSKRYPCJA\n' + rozmowa.join('\n') : 'TRANSKRYPCJA\n(brak wypowiedzi, rozmówca się rozłączył)');
   if (d.conversation_id) czesci.push(`Identyfikator rozmowy w ElevenLabs: ${d.conversation_id}`);
 

@@ -17,7 +17,7 @@ W bloku `KONFIG` w `src/index.src.html`:
 - `telefonDemo`: numer, pod którym odbiera sekretarka (teraz 41 230 67 85, numer z Zadarmy),
 - `webhook`: adres automatyzacji, gdy powstanie serwer. Puste pole oznacza, że zgłoszenia z formularza zbiera Netlify Forms.
 
-## Powiadomienia o rozmowach Oli na Telegram
+## Powiadomienia o rozmowach asystenta na Telegram
 
 Po każdej rozmowie ElevenLabs wysyła dane na adres `https://odzew.tech/api/po-rozmowie`, a funkcja z `netlify/functions/po-rozmowie.mjs` przekazuje na Telegram podsumowanie, dane rozmówcy i transkrypcję.
 
