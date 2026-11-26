@@ -13,3 +13,9 @@
     X-Content-Type-Options = "nosniff"
     X-Frame-Options = "DENY"
     Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Podgląd całej strony na czas prac: nie dla wyszukiwarek.
+[[headers]]
+  for = "/podglad/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
