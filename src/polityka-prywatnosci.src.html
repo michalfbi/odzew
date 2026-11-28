@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Polityka prywatności – Odzew</title>
+<meta name="description" content="Jak Odzew przetwarza dane z formularza i z rozmów z wirtualnym asystentem.">
+<meta name="theme-color" content="#FFC21A">
+<link rel="canonical" href="https://odzew.tech/polityka-prywatnosci/">
+%%WSPOLNE:glowa%%
+%%WSPOLNE:konfig%%
+<style>
+%%WSPOLNE:styl%%
+.dokument { max-width: 46rem; display: flex; flex-direction: column; gap: 28px; }
+.dokument h1 { font-size: var(--t-h2); line-height: 1.05; }
+.dokument section { display: flex; flex-direction: column; gap: 8px; border-top: 1.5px solid var(--linia); padding-top: 20px; }
+.dokument h2 { font-size: var(--t-h3); line-height: 1.2; letter-spacing: -0.01em; }
+.dokument p { max-width: 68ch; }
+.dokument .lead { color: var(--stal); }
+.wroc { align-self: flex-start; }
+</style>
+</head>
+<body>
+%%WSPOLNE:naglowek%%
+<main id="tresc" class="pas" tabindex="-1">
+  <div class="kol dokument">
+    <a class="lacze wroc" href="%%BAZA%%">Wróć na stronę główną</a>
+    <h1>Polityka prywatności</h1>
+    <p class="lead">Krótko: zbieramy tylko to, co sam nam podasz, i używamy tego wyłącznie po to, żeby się z Tobą skontaktować.</p>
+    <section>
+      <h2>Administrator danych</h2>
+      <p><span id="pp-administrator">Michał Pakuła, Odzew, Kielce</span>.</p>
+    </section>
+    <section>
+      <h2>Jakie dane i po co</h2>
+      <p>Imię, nazwa firmy, telefon, e-mail i treść wiadomości z formularza. Używamy ich wyłącznie po to, żeby odpowiedzieć na Twoją prośbę o kontakt i umówić audyt (art. 6 ust. 1 lit. b i f RODO).</p>
+    </section>
+    <section>
+      <h2>Rozmowy z wirtualnym asystentem</h2>
+      <p>Pod numerem <span class="nw" data-tel-tekst>41 230 67 85</span> odbiera wirtualny asystent. Rozmowa jest nagrywana i zapisywana jako tekst, o czym asystent mówi na początku. Nagranie i zapis służą do obsługi Twojego zgłoszenia. Rozmowy głosowe obsługuje zewnętrzny dostawca technologii głosu.</p>
+    </section>
+    <section>
+      <h2>Komu je powierzamy</h2>
+      <p>Dostawcom, z których korzystamy przy obsłudze zgłoszeń: hostingu i serwera w Unii Europejskiej, poczty elektronicznej i bramki SMS. Nie sprzedajemy danych i nie przekazujemy ich do celów reklamowych.</p>
+    </section>
+    <section>
+      <h2>Jak długo</h2>
+      <p>Do 12 miesięcy od ostatniego kontaktu, a jeśli zostaniesz klientem, przez czas trwania umowy i okres wymagany przepisami.</p>
+    </section>
+    <section>
+      <h2>Twoje prawa</h2>
+      <p>Dostęp do danych, sprostowanie, usunięcie, ograniczenie przetwarzania, sprzeciw oraz skarga do Prezesa Urzędu Ochrony Danych Osobowych. Wystarczy wiadomość na adres podany w kontakcie.</p>
+    </section>
+    <section>
+      <h2>Pliki cookie i śledzenie</h2>
+      <p>Ta strona nie używa plików cookie do analityki ani reklam. Czcionki są wczytywane z naszego serwera. Kalkulator liczy wszystko w Twojej przeglądarce.</p>
+    </section>
+  </div>
+</main>
+%%WSPOLNE:stopka%%
+%%WSPOLNE:skrypt%%
+<script>
+if (KONFIG.administrator) document.getElementById('pp-administrator').textContent = KONFIG.administrator;
+</script>
+</body>
+</html>

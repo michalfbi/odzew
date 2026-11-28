@@ -2,7 +2,7 @@
 [build]
   publish = "public"
 
-# Małe funkcje serwerowe: powiadomienia o rozmowach Oli na Telegram.
+# Małe funkcje serwerowe: powiadomienia o rozmowach asystenta na Telegram.
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
@@ -19,3 +19,9 @@
   for = "/podglad/*"
   [headers.values]
     X-Robots-Tag = "noindex, nofollow"
+
+# Czcionki strony leżą na naszym serwerze i się nie zmieniają: przeglądarka trzyma je rok.
+[[headers]]
+  for = "/czcionki/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

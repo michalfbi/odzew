@@ -3,515 +3,1091 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Odzew – automatyzacje dla firm</title>
-<meta name="description" content="Odzew z Kielc: każde zapytanie dostaje odpowiedź w minutę, a każda wycena przypomnienie. Dla firm, które sprzedają na wycenę: okna, kuchnie, klimatyzacja, łazienki.">
+<title>Odzew – wirtualny asystent telefoniczny dla firm, Kielce</title>
+<meta name="description" content="Wirtualny asystent odbiera telefon i odpowiada na zapytania, kiedy Ty nie możesz. Dla firm z Kielc i świętokrzyskiego, które sprzedają na wycenę: okna, kuchnie, klimatyzacja, łazienki.">
 <meta property="og:title" content="Odzew – żadne zapytanie nie przepada">
-<meta property="og:description" content="Automatyzacje dla firm, które sprzedają na wycenę. Bezpłatny audyt 30 minut w Twojej firmie.">
+<meta property="og:description" content="Wirtualny asystent odbiera telefon i odpowiada na zapytania firm, które sprzedają na wycenę. Bezpłatny audyt 30 minut w Twojej firmie.">
 <meta property="og:image" content="https://odzew.tech/odzew-podglad-linku-1200x630.png">
 <meta property="og:url" content="https://odzew.tech/">
 <meta property="og:type" content="website">
+<meta property="og:locale" content="pl_PL">
+<meta name="theme-color" content="#FFC21A">
 <link rel="canonical" href="https://odzew.tech/">
+<!--wspolne:glowa-->
 <link rel="icon" href="data:image/svg+xml;base64,%%FAVICON%%">
+%%PRELOAD%%
+<!--/wspolne:glowa-->
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"ProfessionalService","@id":"https://odzew.tech/#firma","name":"Odzew","url":"https://odzew.tech/","image":"https://odzew.tech/odzew-podglad-linku-1200x630.png","slogan":"Żadne zapytanie nie przepada.","description":"Wirtualny asystent, który odbiera telefon i odpowiada na zapytania firm sprzedających na wycenę.","telephone":"+48412306785","founder":{"@type":"Person","name":"Michał Pakuła"},"address":{"@type":"PostalAddress","addressLocality":"Kielce","addressRegion":"świętokrzyskie","addressCountry":"PL"},"areaServed":[{"@type":"City","name":"Kielce"},{"@type":"AdministrativeArea","name":"województwo świętokrzyskie"}]},
+{"@type":"Service","@id":"https://odzew.tech/#usluga","name":"Wirtualny asystent telefoniczny dla firm","serviceType":"Wirtualny asystent głosowy: odbieranie telefonów i odpowiadanie na zapytania klientów","provider":{"@id":"https://odzew.tech/#firma"},"areaServed":[{"@type":"City","name":"Kielce"},{"@type":"AdministrativeArea","name":"województwo świętokrzyskie"}],"audience":{"@type":"BusinessAudience","name":"Firmy, które sprzedają na wycenę: okna i drzwi, kuchnie na wymiar, klimatyzacja i pompy ciepła, łazienki"}}
+]}
+</script>
+<!--wspolne:konfig-->
 <script>
-/* ====== KONFIGURACJA STRONY: uzupełnij przed publikacją ====== */
+/* ====== KONFIGURACJA STRONY: uzupełnij przed publikacją ======
+   Puste pole nie pokazuje się na stronie. Nic nie trzeba kasować. */
 const KONFIG = {
   webhook: '',        // adres automatyzacji 01, np. https://automaty.odzew.tech/webhook/odzew/zapytanie. Puste = zgłoszenia zbiera Netlify Forms
-  telefon: '',        // np. 600 100 200
+  telefon: '',        // telefon kontaktowy do stopki i formularza, np. 600 100 200
   email: '',          // np. kontakt@odzew.tech
-  administrator: '',  // np. Jan Kowalski VisiLogo, ul. Przykładowa 1, 25-000 Kielce, NIP 0000000000
-  telefonDemo: '41 230 67 85', // numer, pod którym odbiera sekretarka (zakładka „Przetestuj sekretarkę”)
-  agentId: ''         // puste = bez rozmowy przez przeglądarkę, test tylko przez telefon
+  administrator: '',  // dane firmy do stopki i polityki prywatności, np. Jan Kowalski VisiLogo, ul. Przykładowa 1, 25-000 Kielce, NIP 0000000000
+  telefonDemo: '41 230 67 85', // numer, pod którym odbiera Kamil, wirtualny asystent
+  agentId: '',        // puste = bez rozmowy przez przeglądarkę, test tylko przez telefon
+
+  /* --- sekcja „Kto za tym stoi” --- */
+  wlasciciel: 'Michał Pakuła',
+  zdjecie: '',        // adres zdjęcia właściciela, np. /obrazy/michal.jpg (kwadrat, co najmniej 600 px). Puste = monogram
+  oMnie: '',          // 1–2 zdania od siebie: skąd pomysł, czym zajmujesz się na co dzień
+
+  /* --- nagranie prawdziwej rozmowy z asystentem --- */
+  nagranie: '',       // adres pliku MP3, np. /nagrania/rozmowa-okna.mp3. Puste = blok nagrania jest ukryty
+  nagranieOpis: ''    // np. Rozmowa z 12 stycznia, firma okienna z Kielc. Opublikowana za zgodą klienta.
 };
 </script>
+<!--/wspolne:konfig-->
 <style>
+/*wspolne:styl*/
 %%FONTS%%
 :root {
-  /* Układ: szerokie pasy na przemian białe, betonowe i grafitowe; treść w kolumnie 1120 px; jeden żółty akcent na pas. */
-  --sygnal: #FFC21A;
-  --sygnal-jasny: #FFF4CF;
-  --grafit: #16181B;
-  --stal: #565B62;
-  --beton: #F2F3F0;
-  --papier: #FFFFFF;
-  --linia: #D9DCD6;
-  --naglowki: 'Barlow', 'Arial Narrow', Arial, sans-serif;
-  --tekst: 'Inter', Arial, Helvetica, sans-serif;
+  /* Kierunek i role kolorów: patrz DESIGN.md */
+  --sygnal: #FFC21A; --sygnal-cien: #C99400; --sygnal-jasny: #FFF1C2;
+  --grafit: #16181B; --grafit-2: #22252A; --grafit-3: #3A3F46;
+  --papier: #FFFFFF; --beton: #F2F3F0; --linia: #D9DCD6;
+  --stal: #565B62; --mgla: #C6CACF; --popiol: #9CA2A9;
+  --alarm: #B92D1C; --alarm-tlo: #FBE1DD; --ok: #1B6B36; --ok-tlo: #DDF3E1;
+  --kroj: 'Barlow', 'Arial Narrow', Arial, Helvetica, sans-serif;
+  --t-h1: clamp(2.375rem, 1.2rem + 4.9vw, 4.5rem);
+  --t-h2: clamp(1.875rem, 1.3rem + 2.5vw, 3rem);
+  --t-h3: 1.375rem;
+  --t-lead: clamp(1.125rem, 1rem + 0.5vw, 1.3125rem);
+  --t-tekst: 1.125rem; --t-maly: 0.9375rem; --t-mini: 0.875rem;
+  --r-1: 8px; --r-2: 14px; --r-3: 24px;
+  --margines: clamp(20px, 4vw, 40px);
+  --luz: cubic-bezier(.2, .7, .2, 1);
+  --cien: var(--sygnal); --drugi: var(--stal); --fokus: var(--grafit);
   color-scheme: light;
 }
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-body { margin: 0; background: var(--papier); color: var(--grafit); font: 400 17px/1.55 var(--tekst); }
-h1, h2, h3 { font-family: var(--naglowki); font-weight: 800; margin: 0; text-wrap: balance; letter-spacing: -0.015em; }
-h1 { font-size: clamp(44px, 7.4vw, 88px); line-height: 0.98; letter-spacing: -0.025em; }
-h2 { font-size: clamp(32px, 4.4vw, 50px); line-height: 1.04; }
-h3 { font-size: 23px; line-height: 1.15; }
-p { margin: 0; }
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 84px; -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--papier); color: var(--grafit); font: 400 var(--t-tekst)/1.55 var(--kroj); }
+h1, h2, h3 { font-weight: 800; margin: 0; letter-spacing: -0.02em; text-wrap: balance; }
+h1 { font-size: var(--t-h1); line-height: 1; }
+h2 { font-size: var(--t-h2); line-height: 1.05; }
+h3 { font-size: var(--t-h3); line-height: 1.2; letter-spacing: -0.01em; }
+p { margin: 0; text-wrap: pretty; }
 a { color: inherit; }
-:focus-visible { outline: 3px solid var(--grafit); outline-offset: 3px; border-radius: 4px; }
-.ciemny :focus-visible { outline-color: var(--sygnal); }
-.pas { padding: clamp(56px, 8vw, 96px) 0; }
-.kol { width: min(1120px, 100% - 40px); margin-inline: auto; }
-.beton { background: var(--beton); }
-.ciemny { background: var(--grafit); color: var(--papier); }
-.zolty { background: var(--sygnal); }
-.etykieta { display: inline-block; font: 700 14px/1 var(--naglowki); letter-spacing: 0.08em; text-transform: uppercase; background: var(--sygnal); color: var(--grafit); padding: 7px 12px; border-radius: 6px; }
-.zolty .etykieta { background: var(--grafit); color: var(--sygnal); }
-.naglowek-sekcji { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; margin-bottom: clamp(28px, 4vw, 44px); max-width: 760px; }
-.lead { font-size: clamp(18px, 2vw, 21px); color: var(--stal); max-width: 62ch; }
-.ciemny .lead { color: #C6CACF; }
-.przycisk { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 14px 26px; border-radius: 999px; border: 2px solid var(--grafit); background: var(--grafit); color: var(--papier); font: 700 19px/1 var(--naglowki); text-decoration: none; cursor: pointer; }
-.przycisk:hover { background: #000; }
-.przycisk.jasny { background: transparent; color: var(--grafit); }
-.przycisk.jasny:hover { background: rgba(22, 24, 27, 0.08); }
-.przycisk.zolty-p { background: var(--sygnal); border-color: var(--sygnal); color: var(--grafit); }
-.przycisk.zolty-p:hover { background: #FFD04D; }
+b, strong { font-weight: 600; }
+ul, ol { margin: 0; padding: 0; }
+img, svg, video { max-width: 100%; }
+button { font: inherit; color: inherit; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 3px solid var(--fokus); outline-offset: 3px; border-radius: 4px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.nw { white-space: nowrap; }
+.ik { width: 1.25em; height: 1.25em; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.skok { position: absolute; left: 12px; top: -80px; z-index: 50; background: var(--grafit); color: #fff; padding: 12px 18px; border-radius: var(--r-1); font-weight: 600; }
+.skok:focus { top: 12px; }
+main:focus { outline: none; }
+
+.kol { width: min(1160px, 100% - 2 * var(--margines)); margin-inline: auto; }
+.pas { padding-block: clamp(44px, 8vw, 96px); }
+.zolty { background: var(--sygnal); --cien: var(--sygnal-cien); --drugi: var(--grafit); }
+.ciemny { background: var(--grafit); color: #fff; --cien: #fff; --drugi: var(--mgla); --fokus: var(--sygnal); }
+.beton { background: var(--beton); --cien: var(--grafit); }
+.naglowek-s { display: flex; flex-direction: column; gap: 16px; max-width: 46rem; margin-bottom: clamp(28px, 5vw, 56px); }
+.lead { font-size: var(--t-lead); line-height: 1.5; color: var(--drugi); max-width: 60ch; }
+.maly { font-size: var(--t-maly); line-height: 1.45; }
+.mini { font-size: var(--t-mini); line-height: 1.4; }
+.lacze { font-weight: 600; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; transition: background-color .2s; border-radius: 2px; }
+.lacze:hover { background: var(--sygnal); color: var(--grafit); }
+.zolty .lacze:hover { background: var(--grafit); color: var(--sygnal); }
+
+/* przyciski */
+.przycisk { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 12px 26px; border-radius: 999px; border: 2px solid var(--grafit); background: var(--grafit); color: #fff; font: 800 1.125rem/1.1 var(--kroj); letter-spacing: -0.005em; text-decoration: none; cursor: pointer; transition: transform .2s var(--luz), box-shadow .2s var(--luz); }
+.przycisk:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--cien); }
+.przycisk:active { transform: translate(1px, 1px); box-shadow: none; }
+.przycisk[disabled] { opacity: .6; cursor: progress; transform: none; box-shadow: none; }
+.przycisk.kontur { background: transparent; color: var(--grafit); --cien: var(--grafit); }
+.ciemny .przycisk { background: var(--sygnal); border-color: var(--sygnal); color: var(--grafit); }
+.przycisk.tel { padding: 6px 24px 6px 8px; gap: 12px; text-align: left; }
+.przycisk.tel .kolko { width: 40px; height: 40px; border-radius: 50%; background: var(--grafit); color: var(--sygnal); display: grid; place-items: center; flex: none; }
+.przycisk.tel .dwa { display: flex; flex-direction: column; gap: 3px; }
+.przycisk.tel small { font: 600 var(--t-mini)/1 var(--kroj); }
+.przycisk.tel b { font: 800 1.25rem/1 var(--kroj); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
 /* nagłówek strony */
-.gora { position: sticky; top: 0; z-index: 5; background: var(--sygnal); border-bottom: 2px solid var(--grafit); }
-.gora .kol { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; flex-wrap: wrap; }
-.gora svg { height: 40px; width: auto; display: block; }
-.gora nav { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; font-weight: 600; font-size: 15px; }
-.gora nav a { text-decoration: none; }
-.gora nav a:hover { text-decoration: underline; }
-.gora .przycisk { min-height: 44px; padding: 10px 20px; font-size: 16px; }
-
-/* hero */
-.hero { background: var(--sygnal); padding: clamp(40px, 6vw, 80px) 0 clamp(48px, 7vw, 88px); }
-.hero .kol { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 64px); align-items: center; }
-.hero-tekst { display: flex; flex-direction: column; gap: 24px; align-items: flex-start; }
-.hero-tekst .lead { color: var(--grafit); font-weight: 500; }
-.hero-akcje { display: flex; gap: 12px; flex-wrap: wrap; }
-.film { position: relative; margin: 0; background: var(--grafit); border-radius: 22px; overflow: hidden; aspect-ratio: 16 / 9; box-shadow: 10px 10px 0 rgba(22, 24, 27, 0.18); }
-.film video { display: block; width: 100%; height: 100%; object-fit: cover; background: var(--grafit); }
-.film-start { position: absolute; inset: 0; width: 100%; display: flex; align-items: flex-end; justify-content: flex-start; padding: clamp(12px, 2vw, 18px); border: 0; background: transparent; cursor: pointer; }
-.film-start span { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 8px 20px 8px 8px; border-radius: 999px; background: var(--sygnal); color: var(--grafit); font: 700 17px/1 var(--naglowki); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35); transition: transform 0.15s ease; }
-.film-start[hidden] { display: none; }
-.film-start svg { width: 34px; height: 34px; flex-shrink: 0; }
-.film-start:hover span { transform: scale(1.04); }
-.film-start:focus-visible { outline-offset: -6px; outline-color: var(--sygnal); border-radius: 22px; }
-@media (prefers-reduced-motion: reduce) { .film-start span { transition: none; } }
-@media (max-width: 520px) { .film-start span { min-height: 40px; padding: 6px 16px 6px 6px; font-size: 15px; } .film-start svg { width: 28px; height: 28px; } }
-
-
-/* sekretarka demo */
-.sekretarka { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(24px, 4vw, 56px); align-items: start; }
-.sekretarka-tekst { display: flex; flex-direction: column; gap: 20px; align-items: flex-start; }
-.numer-demo { font: 800 clamp(40px, 5.6vw, 64px)/1 var(--naglowki); color: var(--sygnal); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; text-decoration: none; }
-.numer-demo.brak { font-size: clamp(22px, 2.6vw, 28px); color: #C6CACF; }
-.zadzwon { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; border-left: 4px solid var(--sygnal); padding: 6px 0 6px 18px; }
-.zadzwon-napis { color: #C6CACF; font-size: 15px; }
-.zadzwon-napis b { color: var(--sygnal); }
-.wskazowki { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; color: #C6CACF; }
-.wskazowki b { color: var(--papier); font-weight: 600; }
-.rozmowa { background: #22252A; border: 1.5px solid #363A40; border-radius: 22px; padding: 22px; display: flex; flex-direction: column; gap: 10px; }
-.rozmowa .naglowek { display: flex; align-items: center; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid #363A40; }
-.rozmowa .awatar { width: 44px; height: 44px; border-radius: 50%; background: var(--sygnal); color: var(--grafit); display: flex; align-items: center; justify-content: center; font: 800 20px/1 var(--naglowki); flex-shrink: 0; }
-.rozmowa .naglowek small { display: block; color: #9CA2A9; font-size: 13px; }
-.kwestia { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 10px; font-size: 15.5px; line-height: 1.45; }
-.kwestia .kto { font-weight: 700; color: #9CA2A9; font-size: 13px; padding-top: 2px; }
-.kwestia.ola .kto { color: var(--sygnal); }
-.kwestia.ola p { color: var(--papier); }
-.kwestia.klient p { color: #C6CACF; }
-.efekt { margin-top: 6px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-.efekt div { background: var(--grafit); border-radius: 12px; padding: 12px 14px; font-size: 13.5px; color: #C6CACF; }
-.efekt b { display: block; color: var(--sygnal); font: 700 14px/1.2 var(--naglowki); margin-bottom: 4px; letter-spacing: 0.02em; }
-.uwaga-ai { font-size: 13.5px; color: #9CA2A9; }
-@media (max-width: 900px) { .sekretarka { grid-template-columns: minmax(0, 1fr); } }
-@media (max-width: 600px) { .efekt { grid-template-columns: minmax(0, 1fr); } .kwestia { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
-
-/* siatki kart */
-.siatka { display: grid; gap: 16px; }
-.s2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.s3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.s4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.karta { background: var(--papier); border: 1.5px solid var(--linia); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 10px; }
-.karta p { color: var(--stal); font-size: 16px; }
-.ciemny .karta { background: #22252A; border-color: #363A40; }
-.ciemny .karta p { color: #C6CACF; }
-.numer { width: 40px; height: 40px; border-radius: 50%; background: var(--sygnal); color: var(--grafit); display: flex; align-items: center; justify-content: center; font: 800 21px/1 var(--naglowki); flex-shrink: 0; }
-.wiersz { display: flex; align-items: center; gap: 12px; }
-.liczba { font: 800 clamp(48px, 6vw, 72px)/1 var(--naglowki); color: var(--sygnal); }
-.zrodlo { font-size: 13.5px; color: #9CA2A9; }
-
-/* kalkulator */
-.kalk { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); gap: 20px; align-items: stretch; }
-.kalk form { background: var(--papier); border: 1.5px solid var(--linia); border-radius: 16px; padding: 26px; display: flex; flex-direction: column; gap: 20px; }
-.pole { display: flex; flex-direction: column; gap: 8px; }
-.pole label { font-weight: 600; font-size: 15.5px; display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
-.pole output { font: 800 21px/1 var(--naglowki); font-variant-numeric: tabular-nums; white-space: nowrap; }
-input[type=range] { width: 100%; accent-color: var(--grafit); height: 28px; margin: 0; }
-.wynik { background: var(--grafit); color: var(--papier); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 18px; justify-content: space-between; }
-.wynik .duza { font: 800 clamp(44px, 6vw, 68px)/1 var(--naglowki); color: var(--sygnal); font-variant-numeric: tabular-nums; }
-.wynik dl { margin: 0; display: grid; grid-template-columns: 1fr auto; gap: 10px 16px; font-size: 16px; }
-.wynik dt { color: #C6CACF; }
-.wynik dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
-.wynik .uwaga { font-size: 13.5px; color: #9CA2A9; }
-
-/* cennik */
-.cena { font: 800 42px/1 var(--naglowki); font-variant-numeric: tabular-nums; }
-.karta ul { margin: 6px 0 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 15.5px; }
-.karta.pro { background: var(--grafit); color: var(--papier); border-color: var(--grafit); }
-.karta.pro p { color: #C6CACF; }
-.karta.pro .cena { color: var(--sygnal); }
-.plakietka { align-self: flex-start; background: var(--sygnal); color: var(--grafit); font-weight: 700; font-size: 13px; padding: 4px 12px; border-radius: 999px; }
-.drobne { font-size: 14px; color: var(--stal); margin-top: 16px; }
-
-/* oś wdrożenia */
-.krok { border-top: 5px solid var(--sygnal); padding-top: 16px; display: flex; flex-direction: column; gap: 6px; }
-.krok p { color: var(--stal); font-size: 16px; }
-
-/* pytania */
-details { border-bottom: 1.5px solid var(--linia); padding: 16px 0; }
-details summary { font: 700 20px/1.25 var(--naglowki); cursor: pointer; list-style-position: outside; }
-details p { margin-top: 10px; color: var(--stal); max-width: 70ch; }
-
-/* formularz audytu */
-.audyt { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(24px, 4vw, 56px); align-items: start; }
-.audyt-tekst { display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
-.audyt-tekst ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-weight: 500; }
-.kontakt { font: 800 24px/1.3 var(--naglowki); }
-.formularz { background: var(--papier); border: 2px solid var(--grafit); border-radius: 18px; padding: 26px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-.formularz .cala { grid-column: 1 / -1; }
-.formularz label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 15px; }
-.formularz input, .formularz select, .formularz textarea { font: 400 17px/1.3 var(--tekst); color: var(--grafit); background: var(--papier); border: 1.5px solid #8C9198; border-radius: 10px; padding: 12px 14px; min-height: 48px; width: 100%; }
-.formularz textarea { min-height: 96px; resize: vertical; }
-.formularz .pulapka { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
-.formularz .info { font-size: 13.5px; color: var(--stal); }
-.komunikat { border-radius: 12px; padding: 14px 16px; font-weight: 600; }
-.komunikat.ok { background: #DDF3E1; color: #124B22; }
-.komunikat.blad { background: #FBE1DD; color: #7A1D10; }
-.komunikat.podglad { background: var(--sygnal-jasny); color: var(--grafit); }
-[hidden] { display: none !important; }
+.gora { position: sticky; top: 0; z-index: 30; background: var(--sygnal); border-bottom: 2px solid var(--grafit); --cien: var(--sygnal-cien); }
+.gora-w { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; transition: padding .25s var(--luz); }
+.gora .logo { display: flex; align-items: center; min-height: 44px; border-radius: 6px; }
+.gora .logo svg { height: 40px; width: auto; display: block; transition: height .25s var(--luz); }
+.gora.mala .gora-w { padding-block: 4px; }
+.gora.mala .logo svg { height: 32px; }
+.gora nav { display: flex; align-items: center; gap: 4px; }
+.gora nav a:not(.przycisk) { padding: 10px 12px; font-weight: 600; font-size: 1rem; text-decoration: none; border-radius: var(--r-1); transition: background-color .2s; }
+.gora nav a:not(.przycisk):hover { background: rgba(22, 24, 27, .1); }
+.gora .przycisk { min-height: 44px; padding: 8px 20px; font-size: 1rem; margin-left: 8px; }
+.menu-p { display: none; align-items: center; gap: 8px; min-height: 44px; padding: 8px 14px; border: 2px solid var(--grafit); border-radius: 999px; background: transparent; font-weight: 800; cursor: pointer; }
+@media (max-width: 960px) {
+  .menu-p { display: inline-flex; }
+  .gora nav { display: none; position: absolute; left: 0; right: 0; top: 100%; flex-direction: column; align-items: stretch; gap: 0; padding: 8px var(--margines) 20px; background: var(--sygnal); border-bottom: 2px solid var(--grafit); }
+  .gora nav.otwarte { display: flex; }
+  .gora nav a:not(.przycisk) { padding: 14px 4px; font-size: 1.125rem; border-bottom: 1.5px solid rgba(22, 24, 27, .2); border-radius: 0; }
+  .gora .przycisk { margin: 16px 0 0; min-height: 52px; }
+}
 
 /* stopka */
-.stopka { background: var(--grafit); color: #C6CACF; padding: 40px 0; font-size: 14.5px; }
-.stopka .kol { display: flex; flex-direction: column; gap: 18px; }
-.stopka svg { height: 36px; width: auto; align-self: flex-start; }
-.stopka details { border-color: #363A40; }
-.stopka details summary { font: 600 15px/1.3 var(--tekst); color: var(--papier); }
-.stopka details p { color: #C6CACF; font-size: 14px; }
+.stopka { background: var(--grafit); color: var(--mgla); padding-block: clamp(48px, 6vw, 72px) 28px; font-size: var(--t-maly); --fokus: var(--sygnal); }
+.stopka-w { display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)); gap: 32px 40px; }
+.stopka-marka > svg { height: 38px; width: auto; display: block; margin-bottom: 16px; }
+.stopka .haslo { font: 800 1.375rem/1.15 var(--kroj); color: #fff; letter-spacing: -0.01em; max-width: 14ch; }
+.stopka h2 { font-size: var(--t-mini); line-height: 1.4; letter-spacing: 0; font-weight: 600; color: var(--popiol); margin-bottom: 12px; }
+.stopka ul { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.stopka li { padding-block: 3px; }
+.stopka nav a { display: inline-block; padding-block: 3px; }
+.stopka a { color: #fff; text-decoration: none; border-radius: 2px; }
+.stopka a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; color: var(--sygnal); }
+.stopka-dol { margin-top: 40px; padding-top: 20px; border-top: 1.5px solid var(--grafit-3); display: flex; flex-wrap: wrap; gap: 8px 28px; justify-content: space-between; font-size: var(--t-mini); color: var(--popiol); }
+.stopka-dol a { color: var(--mgla); text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 900px) { .stopka-w { grid-template-columns: repeat(2, minmax(0, 1fr)); } .stopka-marka { grid-column: 1 / -1; } }
+@media (max-width: 520px) { .stopka-w { gap: 28px 20px; } .stopka nav ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 20px; } .stopka nav { grid-column: 1 / -1; } }
 
-@media (max-width: 900px) {
-  .hero .kol, .kalk, .audyt { grid-template-columns: minmax(0, 1fr); }
-  .s3, .s4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .gora nav a:not(.przycisk) { display: none; }
+/* notatki widoczne tylko w podglądzie (adres /podglad/), nigdy na stronie głównej */
+.tylko-podglad { display: none; }
+.podglad .tylko-podglad { display: block; border: 2px dashed currentColor; border-radius: var(--r-1); padding: 10px 14px; font-size: var(--t-mini); font-weight: 600; max-width: 60ch; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
 }
+/*/wspolne:styl*/
+
+/* wejścia sekcji: stan ukryty tylko wtedy, gdy skrypt włączy ruch */
+.ruch .wejscie { opacity: 0; transform: translateY(16px); }
+.ruch .wejscie.widac { opacity: 1; transform: none; transition: opacity .45s var(--luz), transform .45s var(--luz); transition-delay: calc(var(--i, 0) * 80ms); }
+
+@media print { .ruch .wejscie, .ruch .os li > *, .ruch .szyna li > *, .ruch .szyna li::after, .ruch .kw.czeka, .scena.gra .zd, .scena.gra .tel-cytat { opacity: 1 !important; transform: none !important; } .gora { position: static; } }
+
+/* pierwszy ekran */
+.hero { border-bottom: 2px solid var(--grafit); padding-block: clamp(36px, 5vw, 72px) clamp(48px, 6vw, 88px); }
+.hero-w { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr); gap: clamp(32px, 5vw, 72px); align-items: center; }
+.hero-tekst { display: flex; flex-direction: column; align-items: flex-start; gap: 24px; }
+.miejsce { display: inline-flex; align-items: center; gap: 8px; font-size: var(--t-maly); font-weight: 600; }
+.miejsce::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--grafit); }
+.hero .lead { max-width: 52ch; }
+.akcje { display: flex; flex-wrap: wrap; gap: 12px; }
+.pod-akcjami { font-size: var(--t-maly); font-weight: 600; max-width: 46ch; }
+
+.scena { margin: 0; }
+.scena-opis { font-size: var(--t-mini); font-weight: 600; margin: 0 0 14px 68px; }
+.scena-os { list-style: none; display: flex; flex-direction: column; gap: 14px; position: relative; }
+.scena-os::before { content: ""; position: absolute; left: 61px; top: 18px; bottom: 26px; width: 2px; background: var(--grafit); }
+.zd { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 16px; align-items: start; position: relative; }
+.zd::before { content: ""; position: absolute; left: 56px; top: 12px; width: 12px; height: 12px; border-radius: 50%; background: var(--sygnal); border: 2px solid var(--grafit); }
+.zd time { font: 800 1.0625rem/1 var(--kroj); font-variant-numeric: tabular-nums; padding-top: 10px; }
+.zd > div { margin-left: 12px; }
+.ekran-tel { background: var(--grafit); color: #fff; border-radius: var(--r-3); padding: 18px 20px 20px; box-shadow: 6px 6px 0 var(--sygnal-cien); display: flex; flex-direction: column; gap: 14px; }
+.tel-gora { display: flex; align-items: center; gap: 12px; }
+.tel-ikona { width: 44px; height: 44px; border-radius: 50%; background: var(--sygnal); color: var(--grafit); display: grid; place-items: center; flex: none; position: relative; }
+.tel-gora b { display: block; font: 800 1.125rem/1.2 var(--kroj); }
+.tel-gora > div { flex: 1; min-width: 0; }
+.tel-czas { font: 800 1rem/1 var(--kroj); font-variant-numeric: tabular-nums; color: var(--sygnal); white-space: nowrap; align-self: flex-start; padding-top: 4px; }
+.scena.gra:not(.s3) .tel-czas { visibility: hidden; }
+.tel-gora span.stan { display: block; font-size: var(--t-mini); line-height: 1.3; color: var(--mgla); }
+.fala { display: flex; align-items: center; gap: 3px; height: 34px; }
+.fala i { flex: 1; max-width: 5px; height: calc(var(--h) * 1%); min-height: 3px; border-radius: 3px; background: var(--sygnal); transform-origin: center; }
+.tel-cytat { font-size: var(--t-maly); line-height: 1.45; color: var(--mgla); border-left: 2px solid var(--grafit-3); padding-left: 12px; }
+.dymek, .wpis { background: var(--papier); border: 2px solid var(--grafit); border-radius: var(--r-2); padding: 12px 16px 14px; font-size: var(--t-maly); line-height: 1.45; }
+.dymek { border-bottom-left-radius: 4px; max-width: 34ch; }
+.zd .kto { display: flex; align-items: center; gap: 6px; font-size: var(--t-mini); font-weight: 600; margin-bottom: 4px; }
+.wpis dl { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 12px; }
+.wpis dt { color: var(--stal); }
+.wpis dd { margin: 0; font-weight: 600; }
+.plakietka { display: inline-block; background: var(--sygnal); border-radius: 12px; padding: 2px 10px; font-size: var(--t-mini); font-weight: 600; }
+/* scena odtwarzana przy wczytaniu: klasy s1–s3 dodaje skrypt */
+.scena.gra .zd-sms, .scena.gra .zd-lejek, .scena.gra .tel-cytat { opacity: 0; transform: translateY(12px); transition: opacity .4s var(--luz), transform .4s var(--luz); }
+.scena.gra.s1 .tel-cytat, .scena.gra.s2 .zd-sms, .scena.gra.s3 .zd-lejek { opacity: 1; transform: none; }
+.scena.gra:not(.s1) .tel-ikona::after { content: ""; position: absolute; inset: -6px; border-radius: 50%; border: 2px solid var(--sygnal); animation: dzwoni 0.9s ease-out infinite; }
+.scena.gra.s1:not(.s3) .fala i { animation: fala .5s ease-in-out infinite alternate; animation-delay: calc(var(--h) * -11ms); }
+.scena.gra:not(.s1) .fala i { height: 3px; }
+@keyframes dzwoni { from { transform: scale(.85); opacity: 1; } to { transform: scale(1.35); opacity: 0; } }
+@keyframes fala { from { transform: scaleY(.35); } to { transform: scaleY(1); } }
+@media (max-width: 900px) { .hero-w { grid-template-columns: minmax(0, 1fr); } .scena { max-width: 520px; } }
 @media (max-width: 600px) {
-  .s2, .s3, .s4, .formularz { grid-template-columns: minmax(0, 1fr); }
-  body { font-size: 16px; }
+  .akcje { flex-direction: column; align-self: stretch; }
+  .akcje .przycisk { width: 100%; }
+  .przycisk.tel { justify-content: flex-start; }
+  .zd { grid-template-columns: 46px minmax(0, 1fr); gap: 12px; }
+  .zd::before { left: 48px; } .scena-os::before { left: 53px; } .scena-opis { margin-left: 58px; }
+  .zd time { font-size: 1rem; }
+  .tel-cytat { display: none; }
+  :root { --t-h1: 2.125rem; }
 }
+
+/* problem: oś czasu utraconego zapytania */
+.os { list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.os li { position: relative; padding: 40px 28px 0 0; }
+.os li::before { content: ""; position: absolute; left: 0; right: 0; top: 10px; height: 2px; background: var(--grafit); transform-origin: left center; }
+.os li::after { content: ""; position: absolute; left: 0; top: 0; width: 22px; height: 22px; border-radius: 50%; background: var(--sygnal); border: 2px solid var(--grafit); }
+.os li.strata::before { display: none; }
+.os li.strata::after { background: var(--alarm) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M5 5l8 8M13 5l-8 8' stroke='%23fff' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E") center / 18px no-repeat; border-color: var(--alarm); }
+.os time { display: block; font: 800 1.0625rem/1.2 var(--kroj); font-variant-numeric: tabular-nums; margin-bottom: 10px; }
+.os .strata time { color: var(--alarm); }
+.os h3 { font-size: 1.25rem; margin-bottom: 6px; }
+.os p { color: var(--stal); font-size: 1rem; max-width: 30ch; }
+.ruch .os li::before { transform: scaleX(0); }
+.ruch .os li > * { opacity: 0; }
+.ruch .os.widac li::before { transform: none; transition: transform .45s var(--luz) calc(var(--i) * .22s + .1s); }
+.ruch .os.widac li > * { opacity: 1; transition: opacity .4s var(--luz) calc(var(--i) * .22s); }
+.liczby { margin-top: clamp(36px, 5vw, 64px); padding-top: clamp(24px, 3vw, 36px); border-top: 2px solid var(--grafit); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px clamp(24px, 4vw, 56px); }
+.liczby .zrodlo { grid-column: 1 / -1; }
+.liczba { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 20px; align-items: center; }
+.liczba-w { font: 800 clamp(3rem, 2rem + 4vw, 4.5rem)/1 var(--kroj); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; background: var(--sygnal); padding: 6px 14px 10px; border-radius: var(--r-1); min-width: 3.3ch; text-align: center; white-space: nowrap; }
+.liczba p:last-child { font-size: 1rem; max-width: 34ch; }
+.zrodlo { font-size: var(--t-mini); color: var(--stal); }
+@media (max-width: 1000px) { .liczby { grid-template-columns: minmax(0, 1fr); } .liczba p:last-child { max-width: 46ch; } }
+@media (max-width: 720px) {
+  .os { grid-template-columns: minmax(0, 1fr); }
+  .os li { padding: 0 0 22px 40px; }
+  .os li:last-child { padding-bottom: 0; }
+  .os li::before { left: 10px; right: auto; top: 6px; bottom: -6px; width: 2px; height: auto; transform-origin: center top; }
+  .os li::after { top: 0; }
+  .ruch .os li::before { transform: scaleY(0); }
+  .os p { max-width: 46ch; }
+  .liczba { gap: 14px; align-items: start; }
+  .liczba-w { font-size: 2.25rem; padding: 4px 10px 7px; }
+}
+
+/* przetestuj */
+.test { display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); gap: clamp(32px, 5vw, 72px); align-items: start; }
+.test-tekst { display: flex; flex-direction: column; align-items: flex-start; gap: 24px; }
+.zadzwon { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; border-left: 4px solid var(--sygnal); padding: 4px 0 4px 20px; }
+.numer-demo { font: 800 clamp(2.75rem, 1.6rem + 4.6vw, 4.25rem)/1 var(--kroj); letter-spacing: -0.02em; color: var(--sygnal); font-variant-numeric: tabular-nums; text-decoration: none; white-space: nowrap; border-radius: 6px; }
+.numer-demo:hover { text-decoration: underline; text-decoration-thickness: 4px; text-underline-offset: 6px; }
+.zadzwon span { color: var(--mgla); font-size: var(--t-maly); max-width: 40ch; }
+.wskazowki { list-style: none; counter-reset: w; display: flex; flex-direction: column; gap: 12px; color: var(--mgla); font-size: 1rem; }
+.wskazowki li { counter-increment: w; display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 12px; }
+.wskazowki li::before { content: counter(w); width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--sygnal); color: var(--sygnal); display: grid; place-items: center; font: 800 1rem/1 var(--kroj); }
+.wskazowki b { color: #fff; }
+.uwaga-ai { font-size: var(--t-mini); color: var(--popiol); max-width: 52ch; }
+.zapis { background: var(--grafit-2); border: 1.5px solid var(--grafit-3); border-radius: var(--r-3); padding: clamp(18px, 2.4vw, 26px); }
+.zapis-gora { display: flex; align-items: center; gap: 12px; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1.5px solid var(--grafit-3); }
+.awatar { width: 46px; height: 46px; border-radius: 50%; background: var(--sygnal); color: var(--grafit); display: grid; place-items: center; font: 800 1.25rem/1 var(--kroj); flex: none; }
+.zapis-gora b { display: block; font-weight: 800; line-height: 1.2; }
+.zapis-gora div span { font-size: var(--t-mini); color: var(--popiol); }
+.kw { display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 12px; padding: 7px 0; font-size: 1rem; line-height: 1.45; color: var(--mgla); }
+.kw b { font-size: var(--t-mini); font-weight: 600; color: var(--popiol); padding-top: 2px; }
+.kw.as { color: #fff; }
+.kw.as b { color: var(--sygnal); }
+.ruch .kw.czeka { opacity: 0; transform: translateY(8px); }
+.ruch .kw { transition: opacity .3s var(--luz), transform .3s var(--luz); }
+.zwin { display: grid; grid-template-rows: 1fr; }
+.zwin > div { overflow: hidden; min-height: 0; }
+.zwijany .zwin { grid-template-rows: 0fr; visibility: hidden; transition: grid-template-rows .4s var(--luz), visibility 0s .4s; }
+.zwijany.otwarty .zwin { grid-template-rows: 1fr; visibility: visible; transition: grid-template-rows .4s var(--luz), visibility 0s; }
+.zapis-wiecej { display: none; margin-top: 12px; width: 100%; min-height: 48px; border: 2px solid var(--grafit-3); border-radius: 999px; background: transparent; color: #fff; font-weight: 800; cursor: pointer; align-items: center; justify-content: center; gap: 8px; transition: border-color .2s, background-color .2s; }
+.zapis-wiecej:hover { border-color: var(--sygnal); }
+.zapis-wiecej .ik { transition: transform .3s var(--luz); }
+.zapis-wiecej[aria-expanded="true"] .ik { transform: rotate(180deg); }
+.zwijany .zapis-wiecej { display: inline-flex; }
+.nagranie { margin: 20px 0 0; display: flex; flex-direction: column; gap: 10px; }
+.nagranie figcaption b { display: block; font-weight: 800; }
+.nagranie figcaption span { font-size: var(--t-mini); color: var(--popiol); }
+.nagranie audio { width: 100%; height: 44px; }
+.test .tylko-podglad { margin-top: 20px; color: var(--mgla); }
+@media (max-width: 900px) { .test { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 520px) { .kw { display: block; padding: 6px 0; } .kw b { padding: 0; margin-right: 8px; } .test-tekst { gap: 20px; } .wskazowki { gap: 10px; font-size: var(--t-maly); } }
+
+/* jak to działa */
+.jak-gora { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 64px); align-items: center; margin-bottom: clamp(40px, 6vw, 72px); }
+.jak-gora .naglowek-s { margin-bottom: 0; }
+.film { position: relative; margin: 0; background: var(--grafit); border: 2px solid var(--grafit); border-radius: var(--r-3); overflow: hidden; aspect-ratio: 16 / 9; box-shadow: 6px 6px 0 var(--sygnal); }
+.film video { display: block; width: 100%; height: 100%; object-fit: cover; background: var(--grafit); }
+.film-start { position: absolute; inset: 0; width: 100%; display: flex; align-items: flex-end; justify-content: flex-start; padding: clamp(12px, 2vw, 18px); border: 0; background: transparent; cursor: pointer; --fokus: var(--sygnal); }
+.film-start span { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 8px 20px 8px 8px; border-radius: 999px; background: var(--sygnal); color: var(--grafit); font: 800 1.0625rem/1 var(--kroj); transition: transform .2s var(--luz); }
+.film-start svg { width: 34px; height: 34px; flex: none; }
+.film-start:hover span { transform: scale(1.05); }
+.film-start:active span { transform: scale(.98); }
+.film-start:focus-visible { outline-offset: -6px; border-radius: var(--r-3); }
+.szyna { list-style: none; counter-reset: k; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.szyna li { counter-increment: k; position: relative; padding: 56px 20px 0 0; }
+.szyna li::before { content: ""; position: absolute; left: 0; right: 0; top: 19px; height: 2px; background: var(--grafit); transform-origin: left center; }
+.szyna li:last-child::before { right: auto; width: 40px; }
+.szyna li::after { content: counter(k); position: absolute; left: 0; top: 0; width: 40px; height: 40px; border-radius: 50%; background: var(--sygnal); border: 2px solid var(--grafit); display: grid; place-items: center; font: 800 1.25rem/1 var(--kroj); }
+.szyna h3 { font-size: 1.1875rem; margin-bottom: 6px; }
+.szyna p { color: var(--stal); font-size: var(--t-maly); line-height: 1.45; }
+.ruch .szyna li::before { transform: scaleX(0); }
+.ruch .szyna li > *, .ruch .szyna li::after { opacity: 0; }
+.ruch .szyna.widac li::before { transform: none; transition: transform .4s var(--luz) calc(var(--i) * .14s + .1s); }
+.ruch .szyna.widac li > *, .ruch .szyna.widac li::after { opacity: 1; transition: opacity .35s var(--luz) calc(var(--i) * .14s); }
+.raport-w { margin-top: clamp(40px, 6vw, 72px); display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(28px, 5vw, 64px); align-items: center; }
+.raport { border: 2px solid var(--grafit); border-radius: var(--r-3); overflow: hidden; background: var(--papier); box-shadow: 6px 6px 0 var(--grafit); }
+.raport-gora { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 18px; background: var(--grafit); color: #fff; font-size: var(--t-maly); font-weight: 600; }
+.raport-gora .plakietka { color: var(--grafit); }
+.raport-tresc { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); }
+.raport dl { margin: 0; padding: 6px 18px; }
+.raport dl div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 9px 0; border-bottom: 1.5px solid var(--linia); font-size: var(--t-maly); }
+.raport dl div:last-child { border-bottom: 0; }
+.raport dt { color: var(--stal); }
+.raport dd { margin: 0; font: 800 1.25rem/1 var(--kroj); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.slupki { border-left: 1.5px solid var(--linia); padding: 16px 18px 12px; display: flex; flex-direction: column; gap: 8px; }
+.slupki-w { flex: 1; min-height: 110px; display: grid; grid-template-columns: repeat(7, 1fr); align-items: end; gap: 6px; }
+.slupki-w i { height: calc(var(--h) * 1%); background: var(--grafit); border-radius: 3px 3px 0 0; transform-origin: bottom; }
+.slupki-w i.po { background: var(--sygnal); box-shadow: inset 0 0 0 2px var(--grafit); }
+.slupki-dni { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; font-size: var(--t-mini); color: var(--stal); text-align: center; }
+.slupki-leg { font-size: var(--t-mini); color: var(--stal); display: flex; align-items: center; gap: 6px; }
+.slupki-leg::before { content: ""; width: 12px; height: 12px; border-radius: 2px; background: var(--sygnal); box-shadow: inset 0 0 0 2px var(--grafit); flex: none; }
+.ruch .raport .slupki-w i { transform: scaleY(0); }
+.ruch .raport.widac .slupki-w i { transform: none; transition: transform .45s var(--luz) calc(var(--i) * 50ms + .15s); }
+.raport-tekst { display: flex; flex-direction: column; gap: 12px; }
+.raport-tekst p { color: var(--stal); max-width: 48ch; }
+@media (max-width: 1100px) { .szyna { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 36px; } .szyna li:nth-child(3)::before { right: auto; width: 40px; } }
+@media (max-width: 900px) { .raport-w { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 680px) { .jak-gora { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 600px) {
+  .szyna { grid-template-columns: minmax(0, 1fr); row-gap: 0; }
+  .szyna li { padding: 6px 0 18px 56px; }
+  .szyna li:last-child { padding-bottom: 0; }
+  .szyna li::before, .szyna li:nth-child(3)::before { left: 19px; right: auto; top: 0; bottom: 0; width: 2px; height: auto; transform-origin: center top; }
+  .szyna li:last-child::before { display: none; }
+  .ruch .szyna li::before { transform: scaleY(0); }
+  .raport-tresc { grid-template-columns: minmax(0, 1fr); }
+  .slupki { display: none; }
+}
+
+/* kalkulator */
+.kalk { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 24px; align-items: stretch; }
+.kalk form { background: var(--papier); border: 2px solid var(--grafit); border-radius: var(--r-3); padding: clamp(18px, 2.6vw, 30px); display: flex; flex-direction: column; justify-content: space-between; gap: 10px; }
+.pole-s label { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; font-weight: 600; font-size: 1rem; line-height: 1.3; }
+.pole-s output { font: 800 1.375rem/1 var(--kroj); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.suwak { --p: 50%; -webkit-appearance: none; appearance: none; display: block; width: 100%; height: 44px; margin: 0; background: transparent; cursor: pointer; border-radius: var(--r-1); }
+.suwak::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: linear-gradient(to right, var(--grafit) var(--p), var(--linia) var(--p)); }
+.suwak::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 28px; height: 28px; margin-top: -11px; border-radius: 50%; background: var(--sygnal); border: 2px solid var(--grafit); box-shadow: 2px 2px 0 var(--grafit); transition: transform .2s var(--luz); }
+.suwak:active::-webkit-slider-thumb { transform: scale(1.12); }
+.suwak::-moz-range-track { height: 6px; border-radius: 3px; background: var(--linia); }
+.suwak::-moz-range-progress { height: 6px; border-radius: 3px; background: var(--grafit); }
+.suwak::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: var(--sygnal); border: 2px solid var(--grafit); box-shadow: 2px 2px 0 var(--grafit); }
+.suwak:focus-visible { outline-offset: 0; }
+.wynik { background: var(--grafit); color: #fff; border-radius: var(--r-3); padding: clamp(22px, 2.8vw, 32px); display: flex; flex-direction: column; gap: 20px; justify-content: space-between; --cien: #fff; --fokus: var(--sygnal); }
+.wynik .duza { font: 800 clamp(2.75rem, 1.6rem + 4.4vw, 4.25rem)/1 var(--kroj); letter-spacing: -0.02em; color: var(--sygnal); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.wynik .nad { color: var(--mgla); font-size: 1rem; margin-bottom: 6px; }
+.wynik dl { margin: 0; font-size: 1rem; }
+.wynik dl div { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 16px; padding: 9px 0; border-top: 1.5px solid var(--grafit-3); }
+.wynik dt { color: var(--mgla); }
+.wynik dd { margin: 0; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.wynik .uwaga { font-size: var(--t-mini); color: var(--popiol); }
+.wynik .przycisk { background: var(--sygnal); border-color: var(--sygnal); color: var(--grafit); align-self: flex-start; }
+@media (max-width: 720px) { .kalk { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 520px) { .wynik { gap: 16px; } .wynik .przycisk { align-self: stretch; } .kalk form { gap: 6px; } }
+
+/* cennik */
+.plany { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.14fr) minmax(0, 1fr); gap: 24px; align-items: center; }
+.plan { border: 1.5px solid var(--linia); border-radius: var(--r-3); padding: 26px 24px; display: flex; flex-direction: column; gap: 14px; background: var(--papier); }
+.plan h3 { font-size: 1.25rem; }
+.cena { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; }
+.cena b { font: 800 2.5rem/1 var(--kroj); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cena span { font-size: var(--t-maly); color: var(--drugi); }
+.wdrozenie { font-size: var(--t-maly); font-weight: 600; padding-bottom: 14px; border-bottom: 1.5px solid var(--linia); }
+.plan ul { list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: var(--t-maly); line-height: 1.4; flex: 1; }
+.plan li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 10px; }
+.plan li .ik { width: 18px; height: 18px; margin-top: 2px; stroke-width: 2.6; }
+.plan .lacze { align-self: flex-start; font-size: 1rem; min-height: 44px; display: inline-flex; align-items: center; }
+.plan.polecany { background: var(--sygnal); border: 2px solid var(--grafit); box-shadow: 8px 8px 0 var(--grafit); padding: 34px 30px; --drugi: var(--grafit); --cien: var(--sygnal-cien); }
+.plan.polecany h3 { font-size: 1.5rem; }
+.plan.polecany .cena b { font-size: 3.5rem; }
+.plan.polecany .wdrozenie { border-color: var(--grafit); }
+.plan.polecany ul { font-size: 1rem; }
+.plan .polec { align-self: flex-start; background: var(--grafit); color: var(--sygnal); border-radius: 999px; padding: 4px 12px; font-size: var(--t-mini); font-weight: 600; }
+.drobne { font-size: var(--t-mini); color: var(--stal); margin-top: 28px; max-width: 92ch; }
+.gwarancja { margin-top: clamp(36px, 5vw, 56px); background: var(--grafit); color: #fff; border-radius: var(--r-3); padding: clamp(24px, 3.6vw, 44px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: center; }
+.gwarancja h3 { font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.125rem); line-height: 1.08; color: var(--sygnal); margin-bottom: 12px; }
+.gwarancja p { color: var(--mgla); font-size: 1rem; max-width: 52ch; }
+.plan-14 { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; }
+.plan-14 li { padding: 12px 0; border-top: 1.5px solid var(--grafit-3); }
+.plan-14 b { display: block; font: 800 1.125rem/1.2 var(--kroj); color: #fff; font-variant-numeric: tabular-nums; }
+.plan-14 span { font-size: var(--t-maly); color: var(--mgla); }
+.plan-wiecej { display: none; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-height: 44px; padding: 0; border: 0; border-top: 1.5px solid var(--linia); background: none; font-weight: 600; font-size: 1rem; cursor: pointer; }
+.plan-wiecej .ik { transition: transform .3s var(--luz); }
+.plan-wiecej[aria-expanded="true"] .ik { transform: rotate(180deg); }
+.plan.zwijany .plan-wiecej { display: flex; }
+.plan.zwijany .wdrozenie { border-bottom: 0; padding-bottom: 0; }
+.plan.zwijany .zwin ul { padding-bottom: 6px; }
+@media (max-width: 900px) {
+  .plany { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+  .plan.polecany { order: -1; grid-column: 1 / -1; box-shadow: 6px 6px 0 var(--grafit); margin-right: 6px; padding: 28px 24px; }
+  .gwarancja { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 600px) { .plany { grid-template-columns: minmax(0, 1fr); gap: 16px; } .plan { padding: 20px; gap: 10px; } .plan.polecany { padding: 24px 20px; gap: 12px; } .plan.zwijany .lacze { margin-top: 4px; } }
+@media (max-width: 600px) { .gwarancja { padding: 22px 20px; gap: 18px; } .plan-14 { gap: 0 16px; } .plan-14 li { padding: 10px 0; } .plan-14 b { font-size: 1rem; } .plan-14 span { font-size: var(--t-mini); } }
+@media (max-width: 340px) { .plan-14 { grid-template-columns: minmax(0, 1fr); } }
+
+/* kto za tym stoi */
+.kto-w { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: clamp(28px, 5vw, 72px); align-items: center; }
+.portret { aspect-ratio: 1; border: 2px solid var(--grafit); border-radius: var(--r-3); background: var(--grafit); color: var(--sygnal); box-shadow: 6px 6px 0 var(--sygnal); display: grid; place-items: center; overflow: hidden; font: 800 6rem/1 var(--kroj); letter-spacing: -0.04em; }
+.portret img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.kto-tekst { display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
+.kto-tekst p { max-width: 58ch; }
+.kto-fakty { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 24px; align-self: stretch; margin-top: 6px; }
+.kto-fakty li { border-top: 2px solid var(--grafit); padding-top: 12px; font-size: var(--t-maly); color: var(--stal); }
+.kto-fakty b { display: block; font-weight: 800; font-size: 1.0625rem; color: var(--grafit); }
+@media (max-width: 900px) {
+  .kto-w { grid-template-columns: 76px minmax(0, 1fr); gap: 20px 16px; align-items: start; }
+  .portret { width: 76px; font-size: 1.75rem; border-radius: var(--r-2); box-shadow: 4px 4px 0 var(--sygnal); }
+  .kto-tekst { display: contents; }
+  .kto-tekst h2 { align-self: center; }
+  .kto-tekst > :not(h2) { grid-column: 1 / -1; }
+  .kto-fakty { margin-top: 0; }
+}
+@media (max-width: 600px) { .kto-fakty { grid-template-columns: minmax(0, 1fr); gap: 12px; } }
+
+/* pytania */
+.pytania-w { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(28px, 5vw, 72px); align-items: start; }
+.pytania-w .naglowek-s { position: sticky; top: 96px; margin-bottom: 0; }
+.akordeon { border-top: 2px solid var(--grafit); }
+.pyt { border-bottom: 1.5px solid var(--linia); }
+.pyt h3 { font-size: inherit; letter-spacing: 0; }
+.pyt button { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 0; border: 0; background: none; text-align: left; font: 800 1.25rem/1.25 var(--kroj); letter-spacing: -0.01em; cursor: pointer; border-radius: var(--r-1); }
+.pyt .strzalka { width: 36px; height: 36px; flex: none; border: 2px solid var(--grafit); border-radius: 50%; display: grid; place-items: center; transition: transform .3s var(--luz), background-color .2s; }
+.pyt .strzalka .ik { width: 18px; height: 18px; stroke-width: 2.6; }
+.pyt button:hover .strzalka { background: var(--sygnal); }
+.pyt button[aria-expanded="true"] .strzalka { transform: rotate(180deg); background: var(--sygnal); }
+.akordeon:not(.js) .strzalka { display: none; }
+.odp { display: grid; grid-template-rows: 1fr; }
+.odp > div { overflow: hidden; min-height: 0; }
+.odp p { padding: 0 52px 22px 0; color: var(--stal); max-width: 62ch; }
+.akordeon.js .odp { grid-template-rows: 0fr; visibility: hidden; transition: grid-template-rows .35s var(--luz), visibility 0s .35s; }
+.akordeon.js .pyt.otwarte .odp { grid-template-rows: 1fr; visibility: visible; transition: grid-template-rows .35s var(--luz), visibility 0s; }
+@media (max-width: 900px) { .pytania-w { grid-template-columns: minmax(0, 1fr); } .pytania-w .naglowek-s { position: static; } }
+@media (max-width: 520px) { .pyt button { font-size: 1.125rem; } .odp p { padding-right: 0; } }
+
+/* audyt */
+.audyt { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(28px, 5vw, 72px); align-items: start; }
+.audyt-tekst { display: flex; flex-direction: column; gap: 20px; align-items: flex-start; }
+.ptaszki { list-style: none; display: flex; flex-direction: column; gap: 12px; font-weight: 600; }
+.ptaszki li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; align-items: start; }
+.ptaszki .kolko { width: 28px; height: 28px; border-radius: 50%; background: var(--grafit); color: var(--sygnal); display: grid; place-items: center; }
+.ptaszki .ik { width: 16px; height: 16px; stroke-width: 3; }
+.kontakt-t { font-weight: 800; font-size: 1.25rem; line-height: 1.3; }
+.formularz { background: var(--papier); border: 2px solid var(--grafit); border-radius: var(--r-3); box-shadow: 8px 8px 0 var(--sygnal-cien); padding: clamp(20px, 3vw, 32px); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 16px; }
+.formularz .cala { grid-column: 1 / -1; }
+.pole { display: flex; flex-direction: column; gap: 6px; }
+.pole label { font-weight: 600; font-size: 1rem; }
+.pole label span { font-weight: 400; color: var(--stal); margin-left: .2em; }
+.formularz input, .formularz select, .formularz textarea { font: 400 1.0625rem/1.3 var(--kroj); color: var(--grafit); background: var(--papier); border: 1.5px solid #8C9198; border-radius: var(--r-1); padding: 12px 14px; min-height: 52px; width: 100%; transition: border-color .2s, box-shadow .2s; }
+.formularz textarea { min-height: 96px; resize: vertical; }
+.formularz input:hover, .formularz select:hover, .formularz textarea:hover { border-color: var(--grafit); }
+.formularz input:focus-visible, .formularz select:focus-visible, .formularz textarea:focus-visible { outline: 3px solid var(--grafit); outline-offset: 2px; border-color: var(--grafit); }
+.formularz [aria-invalid="true"] { border-color: var(--alarm); box-shadow: inset 0 0 0 1px var(--alarm); }
+.blad-pola { color: var(--alarm); font-size: var(--t-mini); font-weight: 600; }
+.formularz .pulapka { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.formularz .info { font-size: var(--t-mini); color: var(--stal); }
+.formularz .przycisk { --cien: var(--sygnal); }
+.komunikat { border-radius: var(--r-1); padding: 14px 16px; font-weight: 600; font-size: 1rem; display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 10px; }
+.komunikat.ok { background: var(--ok-tlo); color: #124B22; }
+.komunikat.blad { background: var(--alarm-tlo); color: #7A1D10; }
+@media (max-width: 900px) { .audyt { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 600px) { .formularz { grid-template-columns: minmax(0, 1fr); box-shadow: 5px 5px 0 var(--sygnal-cien); margin-right: 5px; } }
+
+@media (max-width: 600px) { :root { --t-tekst: 1rem; --t-lead: 1.0625rem; --t-h3: 1.25rem; } body { line-height: 1.5; } .pas { padding-block: 40px; } .hero { padding-block: 28px 40px; } .hero-tekst { gap: 18px; } }
 </style>
 </head>
 <body>
-
-<header class="gora">
-  <div class="kol">
-    <a href="#start" aria-label="Odzew, początek strony">%%LOGO_ZOLTE%%</a>
-    <nav aria-label="Główna">
-      <a href="#sekretarka">Przetestuj sekretarkę</a>
-      <a href="#kalkulator">Kalkulator strat</a>
-      <a href="#jak">Jak to działa</a>
-      <a href="#cennik">Cennik</a>
-      <a class="przycisk" href="#audyt">Umów audyt</a>
+<!--wspolne:naglowek-->
+<a class="skok" href="#tresc">Przejdź do treści</a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-tel" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
+  <symbol id="i-sms" viewBox="0 0 24 24"><path d="M4 5h16v11H10l-5 4v-4H4z"/></symbol>
+  <symbol id="i-lista" viewBox="0 0 24 24"><path d="M4 6h16M4 12h11M4 18h7"/></symbol>
+  <symbol id="i-ptak" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-dol" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-uwaga" viewBox="0 0 24 24"><path d="M12 8v5M12 16.5v.5"/><circle cx="12" cy="12" r="9"/></symbol>
+</svg>
+<header class="gora" id="gora">
+  <div class="kol gora-w">
+    <a class="logo" href="%%BAZA%%" aria-label="Odzew, strona główna">%%LOGO_ZOLTE%%</a>
+    <button class="menu-p" type="button" id="menu-p" aria-expanded="false" aria-controls="nawigacja"><svg class="ik" aria-hidden="true"><use href="#i-menu"/></svg>Menu</button>
+    <nav id="nawigacja" aria-label="Główna">
+      <a href="%%BAZA%%#przetestuj">Przetestuj asystenta</a>
+      <a href="%%BAZA%%#jak">Jak to działa</a>
+      <a href="%%BAZA%%#kalkulator">Kalkulator strat</a>
+      <a href="%%BAZA%%#cennik">Cennik</a>
+      <a href="%%BAZA%%#pytania">Pytania</a>
+      <a class="przycisk" href="%%BAZA%%#audyt">Umów audyt</a>
     </nav>
   </div>
 </header>
+<!--/wspolne:naglowek-->
 
-<main id="start">
+<main id="tresc" tabindex="-1">
 
-<section class="hero">
-  <div class="kol">
+<section class="hero zolty" aria-labelledby="h-start">
+  <div class="kol hero-w">
     <div class="hero-tekst">
-      <span class="etykieta" style="background:var(--grafit);color:var(--sygnal)">Kielce i świętokrzyskie</span>
-      <h1>Żadne zapytanie nie przepada.</h1>
-      <p class="lead">Dla firm, które sprzedają na wycenę: okna i drzwi, kuchnie na wymiar, klimatyzacja i pompy ciepła, łazienki. Każde zapytanie dostaje odpowiedź w minutę, a każda wycena przypomnienie.</p>
-      <div class="hero-akcje">
+      <p class="miejsce">Kielce i województwo świętokrzyskie</p>
+      <h1 id="h-start">Wirtualny asystent odbiera telefon i odpowiada na zapytania, kiedy Ty nie możesz.</h1>
+      <p class="lead">Dla firm, które sprzedają na wycenę: okna i drzwi, kuchnie na wymiar, klimatyzacja i pompy ciepła, łazienki. Asystent rozmawia z klientem, dopytuje o szczegóły i zostawia Ci gotowe zgłoszenie.</p>
+      <div class="akcje">
         <a class="przycisk" href="#audyt">Umów bezpłatny audyt</a>
-        <a class="przycisk jasny" href="#kalkulator">Policz, ile tracisz</a>
+        <a class="przycisk kontur tel" data-tel-href href="tel:+48412306785">
+          <span class="kolko"><svg class="ik" aria-hidden="true"><use href="#i-tel"/></svg></span>
+          <span class="dwa"><small>Zadzwoń i przetestuj</small><b data-tel-tekst>41 230 67 85</b></span>
+        </a>
       </div>
+      <p class="pod-akcjami">Odbiera całą dobę, także w weekend. Zawsze mówi, że jest wirtualnym asystentem.</p>
     </div>
-    <figure class="film">
-      <video id="film" controls playsinline preload="none" poster="/wideo/odzew-film-plakat.jpg" aria-label="Film o Odzewie: jak wirtualny asystent odbiera telefon, 2 minuty, z napisami">
-        <source src="/wideo/odzew-film.mp4" type="video/mp4">
-        <a href="/wideo/odzew-film.mp4">Obejrzyj film o Odzewie (MP4, 2 minuty)</a>
-      </video>
-      <button class="film-start" type="button" id="film-start" hidden aria-label="Odtwórz film, 2 minuty">
-        <span><svg viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="17" fill="#16181B"/><path d="M13.5 10.5v13l10-6.5z" fill="#FFC21A"/></svg>Obejrzyj film · 2 min</span>
-      </button>
+
+    <figure class="scena" id="scena">
+      <figcaption class="scena-opis">Przykład: sobota wieczorem, firma okienna</figcaption>
+      <ol class="scena-os">
+        <li class="zd zd-tel">
+          <time>19:42</time>
+          <div class="ekran-tel">
+            <div class="tel-gora">
+              <span class="tel-ikona"><svg class="ik" aria-hidden="true"><use href="#i-tel"/></svg></span>
+              <div><b>Dzwoni klient</b><span class="stan" id="tel-stan">Odebrał Kamil, wirtualny asystent</span></div>
+              <span class="tel-czas" id="tel-czas">2 min</span>
+            </div>
+            <div class="fala" aria-hidden="true"><i style="--h:30"></i><i style="--h:55"></i><i style="--h:80"></i><i style="--h:45"></i><i style="--h:95"></i><i style="--h:60"></i><i style="--h:35"></i><i style="--h:75"></i><i style="--h:100"></i><i style="--h:50"></i><i style="--h:65"></i><i style="--h:40"></i><i style="--h:85"></i><i style="--h:55"></i><i style="--h:30"></i><i style="--h:70"></i><i style="--h:90"></i><i style="--h:45"></i><i style="--h:60"></i><i style="--h:35"></i><i style="--h:80"></i><i style="--h:50"></i><i style="--h:95"></i><i style="--h:40"></i><i style="--h:65"></i><i style="--h:30"></i><i style="--h:75"></i><i style="--h:45"></i></div>
+            <p class="tel-cytat">„Pięć okien i drzwi tarasowe, dom w Morawicy. Najlepiej oddzwonić w poniedziałek rano.”</p>
+          </div>
+        </li>
+        <li class="zd zd-sms">
+          <time>19:44</time>
+          <div class="dymek">
+            <span class="kto"><svg class="ik" aria-hidden="true"><use href="#i-sms"/></svg>SMS do klienta</span>
+            <p>Dziękujemy za rozmowę! Zgłoszenie przyjęte, oddzwonimy w poniedziałek rano.</p>
+          </div>
+        </li>
+        <li class="zd zd-lejek">
+          <time>19:44</time>
+          <div class="wpis">
+            <span class="kto"><svg class="ik" aria-hidden="true"><use href="#i-lista"/></svg>Nowy wpis w lejku sprzedaży</span>
+            <dl>
+              <dt>Kto</dt><dd>Tomasz, Morawica</dd>
+              <dt>Co</dt><dd>5 okien i drzwi tarasowe</dd>
+              <dt>Status</dt><dd><span class="plakietka">Oddzwonić w poniedziałek rano</span></dd>
+            </dl>
+          </div>
+        </li>
+      </ol>
     </figure>
   </div>
 </section>
 
+<section class="pas" id="problem" aria-labelledby="h-problem">
+  <div class="kol">
+    <div class="naglowek-s wejscie">
+      <h2 id="h-problem">Tak ucieka zlecenie</h2>
+      <p class="lead">Ten sam telefon, tylko bez asystenta.</p>
+    </div>
+    <ol class="os" data-wejscie>
+      <li style="--i:0"><time>Sobota, 19:42</time><h3>Klient dzwoni w sprawie okien</h3><p>Jesteś na montażu. Telefon dzwoni w kieszeni i nikt nie odbiera.</p></li>
+      <li style="--i:1"><time>Sobota, 19:44</time><h3>Dzwoni do następnej firmy</h3><p>Pyta w trzech miejscach. W drugim ktoś odbiera i umawia pomiar.</p></li>
+      <li style="--i:2"><time>Poniedziałek, 8:10</time><h3>Oddzwaniasz</h3><p>Klient dziękuje za telefon. Pomiar ma już umówiony gdzie indziej.</p></li>
+      <li style="--i:3" class="strata"><time>Koniec</time><h3>Zlecenie bierze ktoś inny</h3><p>Nie dlatego, że był lepszy albo tańszy. Odpowiedział pierwszy.</p></li>
+    </ol>
+    <div class="liczby wejscie">
+      <div class="liczba"><p class="liczba-w"><span data-licz="7" data-przed="ok. " data-po="×">ok. 7×</span></p><p>większa szansa na rozmowę z klientem, gdy firma odezwie się w ciągu godziny od zapytania, niż gdy zrobi to godzinę później.</p></div>
+      <div class="liczba"><p class="liczba-w"><span data-licz="23" data-po="%">23%</span></p><p>firm w tym samym badaniu nie odpowiedziało na zapytanie wcale.</p></div>
+      <p class="zrodlo">Źródło: <a class="lacze" href="https://hbr.org/2011/03/the-short-life-of-online-sales-leads" rel="noopener">Harvard Business Review, „The Short Life of Online Sales Leads”, 2011</a>. Badanie objęło firmy w USA.</p>
+    </div>
+  </div>
+</section>
 
-<section class="pas ciemny" id="sekretarka">
-  <div class="kol sekretarka">
-    <div class="sekretarka-tekst">
-      <span class="etykieta">Przetestuj na żywo</span>
-      <h2>Przetestuj, jak działa nasza automatyczna sekretarka</h2>
-      <p class="lead">Zadzwoń pod numer poniżej. Odbierze Kamil, wirtualny asystent. Powiedz, czym zajmuje się Twoja firma, a pokaże, jak odbierałby telefony od Twoich klientów.</p>
+<section class="pas ciemny" id="przetestuj" aria-labelledby="h-test">
+  <div class="kol test">
+    <div class="test-tekst wejscie">
+      <h2 id="h-test">Zadzwoń i sprawdź go sam</h2>
+      <p class="lead">Odbierze Kamil, wirtualny asystent Odzewu. Powiedz, czym zajmuje się Twoja firma, i poproś, żeby pokazał, jak odbierałby telefony od Twoich klientów.</p>
       <div class="zadzwon">
-        <span class="zadzwon-napis">Zadzwoń pod numer</span>
-        <a class="numer-demo brak" id="numer-demo" href="#sekretarka">Numer uruchamiamy</a>
-        <span class="zadzwon-napis" id="numer-opis">Odbiera całą dobę, także w weekend. Rozmowa trwa około pięciu minut.</span>
+        <a class="numer-demo" id="numer-demo" data-tel-href data-tel-tekst href="tel:+48412306785">41 230 67 85</a>
+        <span id="numer-opis">Odbiera całą dobę, także w weekend. Rozmowa trwa około pięciu minut i jest nagrywana.</span>
       </div>
-      <button class="przycisk zolty-p" type="button" id="rozmowa-start" hidden>Albo porozmawiaj przez przeglądarkę</button>
+      <button class="przycisk" type="button" id="rozmowa-start" hidden>Albo porozmawiaj przez przeglądarkę</button>
       <ol class="wskazowki">
-        <li><b>Przedstaw się:</b> „Mam firmę z oknami” albo kuchniami, klimatyzacją, łazienkami.</li>
-        <li><b>Zagraj swojego klienta:</b> zapytaj o cenę, przerwij jej w pół zdania, poproś o człowieka.</li>
-        <li><b>Na koniec zapytaj:</b> „Ile to kosztuje i od kiedy może działać u mnie?”</li>
+        <li><span><b>Przedstaw się:</b> „Mam firmę z oknami” albo kuchniami, klimatyzacją, łazienkami.</span></li>
+        <li><span><b>Zagraj swojego klienta:</b> zapytaj o cenę, przerwij mu w pół zdania, poproś o człowieka.</span></li>
+        <li><span><b>Na koniec zapytaj:</b> „Ile to kosztuje i od kiedy może działać u mnie?”</span></li>
       </ol>
       <p class="uwaga-ai">Kamil na początku rozmowy mówi, że jest wirtualnym asystentem. Tak wymagają przepisy o sztucznej inteligencji i tak robimy u każdego klienta.</p>
     </div>
-    <div class="rozmowa" aria-label="Przykładowa rozmowa z wirtualnym asystentem">
-      <div class="naglowek"><span class="awatar">K</span><div><b>Kamil, Okna Demo Kielce</b><small>Przykładowa rozmowa · sobota, 19:42</small></div></div>
-      <div class="kwestia ola"><span class="kto">Kamil</span><p>Dzień dobry, Okna Demo Kielce, przy telefonie Kamil, wirtualny asystent. W czym mogę pomóc?</p></div>
-      <div class="kwestia klient"><span class="kto">Klient</span><p>Dzień dobry, chciałbym wymienić okna w domu. Ile to mniej więcej kosztuje?</p></div>
-      <div class="kwestia ola"><span class="kto">Kamil</span><p>Jasne. Cena zależy od wymiarów i rodzaju okien, dlatego robimy bezpłatny pomiar. Ile okien chce Pan wymienić?</p></div>
-      <div class="kwestia klient"><span class="kto">Klient</span><p>Pięć, plus drzwi tarasowe. Dom w Morawicy.</p></div>
-      <div class="kwestia ola"><span class="kto">Kamil</span><p>Mhm, już notuję. A jak mogę się do Pana zwracać?</p></div>
-      <div class="kwestia klient"><span class="kto">Klient</span><p>Tomasz.</p></div>
-      <div class="kwestia ola"><span class="kto">Kamil</span><p>Dobrze, Panie Tomku. Czy mogę oddzwonić na numer, z którego Pan dzwoni?</p></div>
-      <div class="kwestia klient"><span class="kto">Klient</span><p>Tak, najlepiej w poniedziałek rano.</p></div>
-      <div class="kwestia ola"><span class="kto">Kamil</span><p>To podsumuję: pięć okien i drzwi tarasowe w domu w Morawicy, oddzwaniamy w poniedziałek rano. Zgadza się? … Zapisałem. Za chwilę dostanie Pan SMS z potwierdzeniem.</p></div>
-      <div class="efekt">
-        <div><b>19:44 · SMS do klienta</b>Dziękujemy za rozmowę! Zgłoszenie przyjęte, oddzwonimy w poniedziałek rano.</div>
-        <div><b>19:44 · lejek sprzedaży</b>Tomasz, Morawica, 5 okien i drzwi tarasowe. Status: do kontaktu w poniedziałek.</div>
+    <div class="wejscie" style="--i:1">
+      <div class="zapis" id="zapis" aria-label="Przykładowa rozmowa z wirtualnym asystentem">
+        <div class="zapis-gora"><span class="awatar" aria-hidden="true">K</span><div><b>Kamil, Okna Demo Kielce</b><span>Przykładowa rozmowa, sobota 19:42</span></div></div>
+        <p class="kw as"><b>Kamil</b><span>Dzień dobry, Okna Demo Kielce, przy telefonie Kamil, wirtualny asystent. W czym mogę pomóc?</span></p>
+        <p class="kw"><b>Klient</b><span>Dzień dobry, chciałbym wymienić okna w domu. Ile to mniej więcej kosztuje?</span></p>
+        <p class="kw as"><b>Kamil</b><span>Jasne. Cena zależy od wymiarów i rodzaju okien, dlatego robimy bezpłatny pomiar. Ile okien chce Pan wymienić?</span></p>
+        <p class="kw"><b>Klient</b><span>Pięć, plus drzwi tarasowe. Dom w Morawicy.</span></p>
+        <p class="kw as"><b>Kamil</b><span>Mhm, już notuję. A jak mogę się do Pana zwracać?</span></p>
+        <p class="kw"><b>Klient</b><span>Tomasz.</span></p>
+        <div class="zwin" id="zapis-reszta"><div>
+          <p class="kw as"><b>Kamil</b><span>Dobrze, Panie Tomku. Czy mogę oddzwonić na numer, z którego Pan dzwoni?</span></p>
+          <p class="kw"><b>Klient</b><span>Tak, najlepiej w poniedziałek rano.</span></p>
+          <p class="kw as"><b>Kamil</b><span>To podsumuję: pięć okien i drzwi tarasowe w domu w Morawicy, oddzwaniamy w poniedziałek rano. Zgadza się? … Zapisałem. Za chwilę dostanie Pan SMS z potwierdzeniem.</span></p>
+        </div></div>
+        <button class="zapis-wiecej" type="button" id="zapis-wiecej" aria-expanded="false" aria-controls="zapis-reszta"><span>Pokaż całą rozmowę</span><svg class="ik" aria-hidden="true"><use href="#i-dol"/></svg></button>
+      </div>
+      <figure class="nagranie" id="nagranie" hidden>
+        <figcaption><b>Posłuchaj prawdziwej rozmowy</b><span id="nagranie-opis"></span></figcaption>
+        <audio id="nagranie-audio" controls preload="none"></audio>
+      </figure>
+      <p class="tylko-podglad">Notatka widoczna tylko w podglądzie: tu pojawi się odtwarzacz z nagraniem prawdziwej rozmowy, gdy wpiszesz adres pliku w KONFIG.nagranie.</p>
+    </div>
+  </div>
+</section>
+
+<section class="pas" id="jak" aria-labelledby="h-jak">
+  <div class="kol">
+    <div class="jak-gora">
+      <div class="naglowek-s wejscie">
+        <h2 id="h-jak">Od zapytania do podpisanej umowy</h2>
+        <p class="lead">Nie zmieniasz programów ani numeru telefonu. Podłączamy się do tego, czego już używasz.</p>
+      </div>
+      <figure class="film wejscie" style="--i:1">
+        <video id="film" controls playsinline preload="none" poster="/wideo/odzew-film-plakat.jpg" aria-label="Film o Odzewie: jak wirtualny asystent odbiera telefon, 2 minuty, z napisami">
+          <source src="/wideo/odzew-film.mp4" type="video/mp4">
+          <a href="/wideo/odzew-film.mp4">Obejrzyj film o Odzewie (MP4, 2 minuty)</a>
+        </video>
+        <button class="film-start" type="button" id="film-start" hidden aria-label="Odtwórz film, 2 minuty">
+          <span><svg viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="17" fill="#16181B"/><path d="M13.5 10.5v13l10-6.5z" fill="#FFC21A"/></svg>Obejrzyj film, 2 min</span>
+        </button>
+      </figure>
+    </div>
+    <ol class="szyna" data-wejscie>
+      <li style="--i:0"><h3>Zapytanie</h3><p>Telefon, strona, poczta i Messenger trafiają w jedno miejsce.</p></li>
+      <li style="--i:1"><h3>Odpowiedź</h3><p>Telefon odbiera asystent. Na wiadomość klient dostaje odpowiedź po minucie, także w nocy i w weekend.</p></li>
+      <li style="--i:2"><h3>Zgłoszenie</h3><p>Dostajesz gotowy wpis: kto się odezwał, czego potrzebuje i kiedy oddzwonić.</p></li>
+      <li style="--i:3"><h3>Pomiar i wycena</h3><p>Klient wybiera termin pomiaru. Szkic wyceny powstaje z Twojego cennika, a wysyłasz go Ty.</p></li>
+      <li style="--i:4"><h3>Przypomnienia</h3><p>Po wysłaniu oferty system pyta o decyzję w 2., 5. i 10. dniu.</p></li>
+      <li style="--i:5"><h3>Opinia</h3><p>Dzień po montażu każdy klient dostaje prośbę o opinię w Google.</p></li>
+    </ol>
+    <div class="raport-w">
+      <div class="raport" aria-label="Przykładowy raport tygodniowy">
+        <div class="raport-gora"><span>Raport tygodniowy</span><span class="plakietka">Dane przykładowe</span></div>
+        <div class="raport-tresc">
+          <dl>
+            <div><dt>Rozmowy odebrane przez asystenta</dt><dd>23</dd></div>
+            <div><dt>Z tego wieczorem i w weekend</dt><dd>9</dd></div>
+            <div><dt>Zapytania ze strony</dt><dd>11</dd></div>
+            <div><dt>Czeka na Twój telefon</dt><dd>4</dd></div>
+          </dl>
+          <div class="slupki" aria-hidden="true">
+            <div class="slupki-w"><i style="--h:55;--i:0"></i><i style="--h:40;--i:1"></i><i style="--h:75;--i:2"></i><i style="--h:50;--i:3"></i><i style="--h:65;--i:4"></i><i class="po" style="--h:100;--i:5"></i><i class="po" style="--h:45;--i:6"></i></div>
+            <div class="slupki-dni"><span>Pn</span><span>Wt</span><span>Śr</span><span>Cz</span><span>Pt</span><span>So</span><span>Nd</span></div>
+            <span class="slupki-leg">Sobota i niedziela</span>
+          </div>
+        </div>
+      </div>
+      <div class="raport-tekst wejscie">
+        <h3>Raport zamiast zgadywania</h3>
+        <p>Widzisz, ile było rozmów i zapytań, ile przyszło po godzinach i ile czeka na Twój telefon. Jak często przychodzi raport i które kroki działają u Ciebie, zależy od pakietu: pokazuje to <a class="lacze" href="#cennik">cennik</a>.</p>
       </div>
     </div>
   </div>
 </section>
 
-<section class="pas">
+<section class="pas beton" id="kalkulator" aria-labelledby="h-kalk">
   <div class="kol">
-    <div class="naglowek-sekcji">
-      <span class="etykieta">Problem</span>
-      <h2>Zlecenia uciekają w czterech miejscach</h2>
-    </div>
-    <div class="siatka s4">
-      <div class="karta"><h3>Telefon w czasie montażu</h3><p>Klient dzwoni, nikt nie odbiera, więc wybiera następną firmę z listy.</p></div>
-      <div class="karta"><h3>Zapytanie po godzinach</h3><p>Wiadomość z soboty czeka do poniedziałku. Klient pytał w trzech miejscach.</p></div>
-      <div class="karta"><h3>Wycena robiona wieczorem</h3><p>Oferta wychodzi po kilku dniach, bo w ciągu dnia nie ma kiedy jej policzyć.</p></div>
-      <div class="karta"><h3>Cisza po wysłaniu oferty</h3><p>Nikt nie pyta o decyzję, więc zlecenie bierze ktoś, kto zapytał.</p></div>
-    </div>
-  </div>
-</section>
-
-<section class="pas ciemny">
-  <div class="kol">
-    <div class="naglowek-sekcji">
-      <span class="etykieta">Dlaczego szybkość</span>
-      <h2>Wygrywa ten, kto odpisze pierwszy</h2>
-    </div>
-    <div class="siatka s2">
-      <div class="karta"><span class="liczba">ok. 7×</span><p>większa szansa na rozmowę z klientem, gdy firma odezwie się w ciągu godziny od zapytania, niż gdy zrobi to godzinę później.</p><span class="zrodlo">Harvard Business Review, „The Short Life of Online Sales Leads”, 2011</span></div>
-      <div class="karta"><span class="liczba">23%</span><p>firm w tym samym badaniu nie odpowiedziało na zapytanie wcale.</p><span class="zrodlo">Harvard Business Review, 2011</span></div>
-    </div>
-  </div>
-</section>
-
-<section class="pas beton" id="kalkulator">
-  <div class="kol">
-    <div class="naglowek-sekcji">
-      <span class="etykieta">Kalkulator strat</span>
-      <h2>Policz, ile kosztują Cię zapytania bez odpowiedzi</h2>
+    <div class="naglowek-s wejscie">
+      <h2 id="h-kalk">Policz, ile kosztują Cię zapytania bez odpowiedzi</h2>
       <p class="lead">Przesuń suwaki na liczby ze swojej firmy. Niczego nie zapisujemy ani nie wysyłamy.</p>
     </div>
     <div class="kalk">
       <form id="kalk" onsubmit="return false">
-        <div class="pole"><label for="k-zap">Zapytania miesięcznie <output id="o-zap" for="k-zap"></output></label><input type="range" id="k-zap" min="5" max="200" step="5" value="40"></div>
-        <div class="pole"><label for="k-bez">Czekają na odpowiedź ponad godzinę <output id="o-bez" for="k-bez"></output></label><input type="range" id="k-bez" min="0" max="80" step="5" value="25"></div>
-        <div class="pole"><label for="k-odch">Z czekających idzie do konkurencji <output id="o-odch" for="k-odch"></output></label><input type="range" id="k-odch" min="10" max="90" step="5" value="50"></div>
-        <div class="pole"><label for="k-skut">Skuteczność Twoich ofert <output id="o-skut" for="k-skut"></output></label><input type="range" id="k-skut" min="5" max="60" step="5" value="20"></div>
-        <div class="pole"><label for="k-wart">Średnia wartość zlecenia <output id="o-wart" for="k-wart"></output></label><input type="range" id="k-wart" min="2000" max="60000" step="1000" value="15000"></div>
+        <div class="pole-s"><label for="k-zap">Zapytania miesięcznie <output id="o-zap" for="k-zap"></output></label><input class="suwak" type="range" id="k-zap" min="5" max="200" step="5" value="40"></div>
+        <div class="pole-s"><label for="k-bez">Czekają na odpowiedź ponad godzinę <output id="o-bez" for="k-bez"></output></label><input class="suwak" type="range" id="k-bez" min="0" max="80" step="5" value="25"></div>
+        <div class="pole-s"><label for="k-odch">Z czekających idzie do konkurencji <output id="o-odch" for="k-odch"></output></label><input class="suwak" type="range" id="k-odch" min="10" max="90" step="5" value="50"></div>
+        <div class="pole-s"><label for="k-skut">Skuteczność Twoich ofert <output id="o-skut" for="k-skut"></output></label><input class="suwak" type="range" id="k-skut" min="5" max="60" step="5" value="20"></div>
+        <div class="pole-s"><label for="k-wart">Średnia wartość zlecenia <output id="o-wart" for="k-wart"></output></label><input class="suwak" type="range" id="k-wart" min="2000" max="60000" step="1000" value="15000"></div>
       </form>
-      <div class="wynik" aria-live="polite">
+      <div class="wynik wejscie" id="wynik">
         <div>
-          <p style="color:#C6CACF">Szacowana strata w roku</p>
+          <p class="nad">Szacowana strata w roku</p>
           <p class="duza" id="w-strata"></p>
         </div>
         <dl>
-          <dt>Zapytania bez szybkiej odpowiedzi</dt><dd id="w-bez"></dd>
-          <dt>Utracone zlecenia w roku</dt><dd id="w-zlec"></dd>
-          <dt>Sekretarka + Zapytania w pierwszym roku</dt><dd>9 278 zł netto</dd>
-          <dt>Zwraca się po</dt><dd id="w-zwrot"></dd>
+          <div><dt>Zapytania bez szybkiej odpowiedzi</dt><dd id="w-bez"></dd></div>
+          <div><dt>Utracone zlecenia w roku</dt><dd id="w-zlec"></dd></div>
+          <div><dt>Sekretarka + Zapytania w pierwszym roku</dt><dd>9 278 zł netto</dd></div>
+          <div><dt>Zwraca się po</dt><dd id="w-zwrot"></dd></div>
         </dl>
         <p class="uwaga">To szacunek na Twoich założeniach, a nie obietnica wyniku. Prawdziwe liczby policzymy razem na audycie, z rejestru połączeń i skrzynki.</p>
-        <a class="przycisk zolty-p" href="#audyt">Sprawdź to u siebie</a>
+        <a class="przycisk" href="#audyt">Sprawdź to u siebie</a>
+        <p class="sr" id="w-sr" aria-live="polite"></p>
       </div>
     </div>
   </div>
 </section>
 
-<section class="pas" id="jak">
+<section class="pas" id="cennik" aria-labelledby="h-cennik">
   <div class="kol">
-    <div class="naglowek-sekcji">
-      <span class="etykieta">Jak to działa</span>
-      <h2>Od zapytania do podpisanej umowy</h2>
-      <p class="lead">Nie zmieniasz programów ani numeru telefonu. Podłączamy się do tego, czego już używasz.</p>
+    <div class="naglowek-s wejscie">
+      <h2 id="h-cennik">Trzy pakiety, jedna zasada: płacisz za działający system</h2>
     </div>
-    <div class="siatka s3">
-      <div class="karta"><div class="wiersz"><span class="numer">1</span><h3>Zapytanie</h3></div><p>Strona, poczta, Messenger i telefon trafiają w jedno miejsce.</p></div>
-      <div class="karta"><div class="wiersz"><span class="numer">2</span><h3>Odpowiedź</h3></div><p>Po minucie klient dostaje SMS lub e-mail, także w nocy i w weekend.</p></div>
-      <div class="karta"><div class="wiersz"><span class="numer">3</span><h3>Nieodebrany telefon</h3></div><p>Dzwoniący dostaje SMS, a biuro przypomnienie, żeby oddzwonić.</p></div>
-      <div class="karta"><div class="wiersz"><span class="numer">4</span><h3>Pomiar i wycena</h3></div><p>Klient wybiera termin pomiaru, a szkic wyceny powstaje z Twojego cennika. Wysyłasz go po swojej akceptacji.</p></div>
-      <div class="karta"><div class="wiersz"><span class="numer">5</span><h3>Przypomnienia</h3></div><p>Po wysłaniu oferty system pyta o decyzję w 2., 5. i 10. dniu.</p></div>
-      <div class="karta"><div class="wiersz"><span class="numer">6</span><h3>Opinia</h3></div><p>Dzień po montażu każdy klient dostaje prośbę o opinię w Google.</p></div>
-    </div>
-  </div>
-</section>
-
-<section class="pas beton" id="cennik">
-  <div class="kol">
-    <div class="naglowek-sekcji">
-      <span class="etykieta">Cennik</span>
-      <h2>Trzy pakiety, jedna zasada: płacisz za działający system</h2>
-    </div>
-    <div class="siatka s3">
-      <div class="karta"><h3>Sekretarka</h3><span class="cena">449 zł</span><p>miesięcznie · wdrożenie 990 zł</p><ul><li>Asystent głosowy odbiera na Twoim numerze całą dobę</li><li>150 minut rozmów w miesiącu</li><li>SMS do klienta z potwierdzeniem</li><li>Zgłoszenie na Twój telefon i listę kontaktów</li><li>Raport co miesiąc</li></ul></div>
-      <div class="karta pro"><span class="plakietka">Polecany</span><h3>Sekretarka + Zapytania</h3><span class="cena">649 zł</span><p>miesięcznie · wdrożenie 1 490 zł</p><ul><li>Wszystko z pakietu Sekretarka</li><li>300 minut rozmów w miesiącu</li><li>Odpowiedź na zapytanie ze strony w 60 sekund</li><li>Przypomnienia po wysłaniu oferty</li><li>Prośba o opinię po montażu</li><li>Raport co tydzień</li></ul></div>
-      <div class="karta"><h3>Biuro</h3><span class="cena">od 990 zł</span><p>miesięcznie · wdrożenie od 3 900 zł</p><ul><li>Wszystko z pakietu Sekretarka + Zapytania</li><li>600 minut rozmów, do trzech numerów</li><li>Kalendarz pomiarów z przypomnieniami</li><li>Szkic wyceny z Twojego cennika</li><li>Automatyzacje robione na zamówienie</li></ul></div>
+    <div class="plany">
+      <article class="plan wejscie">
+        <h3>Sekretarka</h3>
+        <p class="cena"><b>449 zł</b><span>miesięcznie</span></p>
+        <p class="wdrozenie">wdrożenie 990 zł</p>
+        <button class="plan-wiecej" type="button" aria-expanded="false" aria-controls="plan-sekretarka"><span>Co zawiera pakiet</span><svg class="ik" aria-hidden="true"><use href="#i-dol"/></svg></button>
+        <div class="zwin" id="plan-sekretarka"><div>
+        <ul>
+          <li><svg class="ik" aria-hidden="true"><use href="#i-ptak"/></svg>Asystent głosowy odbiera na Twoim numerze całą dobę</li>
+          <li><svg class="ik" aria-hidden="true"><use href="#i-ptak"/></svg>150 minut rozmów w miesiącu</li>
+          <li><svg class="ik" aria-hidden="true"><use href="#i-ptak"/></svg>SMS do klienta z potwierdzeniem</li>
+          <li><svg class="ik" aria-hidden="true"><use href="#i-ptak"/></svg>Zgłoszenie na Twój telefon i listę kontaktów</li>
+          <li><svg class="ik" aria-hidden="true"><use href="#i-ptak"/></svg>Raport co miesiąc</li>
+        </ul>
+        </div></div>
+        <a class="lacze" href="#audyt" data-pakiet="Sekretarka">Zapytaj o ten pakiet</a>
+      </article>
+      <article class="plan polecany wejscie" style="--i:1">
+        <span class="polec">Polecany</span>
+        <h3>Sekretarka + Zapytania</h3>
+        <p class="cena"><b>649 zł</b><span>miesięcznie</span></p>
+        <p class="wdrozenie">wdrożenie 1 490 zł</p>
+        <ul>
+          <li><svg class="ik" aria-hidden="true"><use href="#i-ptak"/></svg>Wszystko z pakietu Sekretarka</li>
+          <li><svg class="ik" aria-hidden="true"><use href="#i-ptak"/></svg>300 minut rozmów w miesiącu</li>
+          <li><svg class="ik" aria-hidden="true"><use href="#i-ptak"/></svg>Odpowiedź na zapytanie ze strony w 60 sekund</li>
+          <li><svg class="ik" aria-hidden="true"><use href="#i-ptak"/></svg>Przypomnienia po wysłaniu oferty</li>
+          <li><svg class="ik" aria-hidden="true"><use href="#i-ptak"/></svg>Prośba o opinię po montażu</li>
+          <li><svg class="ik" aria-hidden="true"><use href="#i-ptak"/></svg>Raport co tydzień</li>
+        </ul>
+        <a class="przycisk" href="#audyt" data-pakiet="Sekretarka + Zapytania">Umów bezpłatny audyt</a>
+      </article>
+      <article class="plan wejscie" style="--i:2">
+        <h3>Biuro</h3>
+        <p class="cena"><b>od 990 zł</b><span>miesięcznie</span></p>
+        <p class="wdrozenie">wdrożenie od 3 900 zł</p>
+        <button class="plan-wiecej" type="button" aria-expanded="false" aria-controls="plan-biuro"><span>Co zawiera pakiet</span><svg class="ik" aria-hidden="true"><use href="#i-dol"/></svg></button>
+        <div class="zwin" id="plan-biuro"><div>
+        <ul>
+          <li><svg class="ik" aria-hidden="true"><use href="#i-ptak"/></svg>Wszystko z pakietu Sekretarka + Zapytania</li>
+          <li><svg class="ik" aria-hidden="true"><use href="#i-ptak"/></svg>600 minut rozmów, do trzech numerów</li>
+          <li><svg class="ik" aria-hidden="true"><use href="#i-ptak"/></svg>Kalendarz pomiarów z przypomnieniami</li>
+          <li><svg class="ik" aria-hidden="true"><use href="#i-ptak"/></svg>Szkic wyceny z Twojego cennika</li>
+          <li><svg class="ik" aria-hidden="true"><use href="#i-ptak"/></svg>Automatyzacje robione na zamówienie</li>
+        </ul>
+        </div></div>
+        <a class="lacze" href="#audyt" data-pakiet="Biuro">Zapytaj o ten pakiet</a>
+      </article>
     </div>
     <p class="drobne">Ceny netto, doliczamy 23% VAT. Abonament obejmuje numer, minuty rozmów, SMS-y, serwer, opiekę i poprawki. Wdrożenie płacisz raz. Każda minuta ponad pakiet kosztuje 1,20 zł. Minimum 3 miesiące, potem wypowiedzenie z miesięcznym wyprzedzeniem.</p>
-  </div>
-</section>
-
-<section class="pas zolty">
-  <div class="kol">
-    <div class="naglowek-sekcji">
-      <span class="etykieta">Gwarancja</span>
-      <h2>Odpowiedź w mniej niż 5 minut albo zwrot wdrożenia</h2>
-      <p class="lead" style="color:var(--grafit);font-weight:500">Jeśli w 60 dni od startu średni czas pierwszej odpowiedzi na zapytanie nie spadnie poniżej 5 minut, zwracamy 100% opłaty za wdrożenie. Czas liczymy z Twojego lejka, nie z naszych deklaracji.</p>
-    </div>
-    <div class="siatka s4">
-      <div class="krok" style="border-color:var(--grafit)"><h3>Dzień 0</h3><p style="color:var(--grafit)">Umowa i spotkanie startowe, 45 minut</p></div>
-      <div class="krok" style="border-color:var(--grafit)"><h3>Dni 1–7</h3><p style="color:var(--grafit)">Podłączamy kanały i Twoje treści</p></div>
-      <div class="krok" style="border-color:var(--grafit)"><h3>Dni 8–13</h3><p style="color:var(--grafit)">Testy na prawdziwych zapytaniach</p></div>
-      <div class="krok" style="border-color:var(--grafit)"><h3>Dzień 14</h3><p style="color:var(--grafit)">Start i szkolenie zespołu, 45 minut</p></div>
+    <div class="gwarancja wejscie">
+      <div>
+        <h3>Odpowiedź w mniej niż 5 minut albo zwrot wdrożenia</h3>
+        <p>Jeśli w 60 dni od startu średni czas pierwszej odpowiedzi na zapytanie nie spadnie poniżej 5 minut, zwracamy 100% opłaty za wdrożenie. Czas liczymy z Twojego lejka, nie z naszych deklaracji.</p>
+      </div>
+      <ol class="plan-14" aria-label="Wdrożenie w 14 dni">
+        <li><b>Dzień 0</b><span>Umowa i spotkanie startowe, 45 minut</span></li>
+        <li><b>Dni 1–7</b><span>Podłączamy kanały i Twoje treści</span></li>
+        <li><b>Dni 8–13</b><span>Testy na prawdziwych zapytaniach</span></li>
+        <li><b>Dzień 14</b><span>Start i szkolenie zespołu, 45 minut</span></li>
+      </ol>
     </div>
   </div>
 </section>
 
-<section class="pas">
-  <div class="kol">
-    <div class="naglowek-sekcji">
-      <span class="etykieta">Pytania</span>
-      <h2>O co pytają właściciele</h2>
-    </div>
-    <details><summary>Nie mam czasu na wdrożenia. Ile to zajmie mnie?</summary><p>Dwa spotkania po 45 minut: start i odbiór. Resztę robimy my. System ma Ci oddać czas, a nie go zabrać.</p></details>
-    <details><summary>Czy automat nie napisze klientowi głupot?</summary><p>Automat wysyła tylko treści, które wcześniej zatwierdzisz: potwierdzenie, pytania, przypomnienia. Nie podaje cen ani terminów montażu. Wycenę zawsze wysyłasz Ty.</p></details>
-    <details><summary>Moi klienci wolą dzwonić.</summary><p>Telefon zostaje. System łapie te połączenia, których nie odbierzesz, i w minutę odpisuje SMS-em, że oddzwonisz.</p></details>
-    <details><summary>Mamy już swój program. Trzeba go zmieniać?</summary><p>Nie. Podłączamy się do poczty, strony i telefonu, których już używasz. Lejek sprzedaży to zwykły arkusz, który widzisz na telefonie.</p></details>
-    <details><summary>Co z danymi klientów?</summary><p>Każda firma ma własny serwer w Unii Europejskiej i własne konta. Podpisujemy umowę powierzenia przetwarzania danych. Przy rozstaniu przekazujemy dostęp i eksport.</p></details>
-    <details><summary>Czy system pisze do ludzi, którzy o nic nie pytali?</summary><p>Nie. Odpowiada wyłącznie osobom, które same się zgłosiły, i tylko w sprawie ich zapytania.</p></details>
-  </div>
-</section>
-
-<section class="pas zolty" id="audyt">
-  <div class="kol audyt">
-    <div class="audyt-tekst">
-      <span class="etykieta">Bezpłatny audyt</span>
-      <h2>30 minut w Twojej firmie</h2>
-      <ul>
-        <li>Liczymy zapytania i nieodebrane telefony z ostatniego tygodnia</li>
-        <li>Pokazujemy demo na Twoim telefonie</li>
-        <li>Zostawiamy wynik na jednej stronie, bez zobowiązań</li>
+<section class="pas beton" id="kto" aria-labelledby="h-kto">
+  <div class="kol kto-w">
+    <div class="portret wejscie" id="portret" aria-hidden="true">MP</div>
+    <div class="kto-tekst wejscie" style="--i:1">
+      <h2 id="h-kto">Kto za tym stoi</h2>
+      <p class="lead">Odzew prowadzi <span id="kto-imie">Michał Pakuła</span> z Kielc. To on przyjeżdża na audyt, ustawia asystenta pod Twoją firmę i podpisuje umowę.</p>
+      <p id="kto-omnie" hidden></p>
+      <p>Odzew jest projektem kieleckiej agencji <a class="lacze" href="https://www.visilogo.com" rel="noopener">VisiLogo</a>.</p>
+      <ul class="kto-fakty">
+        <li><b>Audyt u Ciebie</b>30 minut w Twojej firmie, w Kielcach i w całym województwie.</li>
+        <li><b>Dwa spotkania</b>Po 45 minut: start i odbiór. Resztę robimy my.</li>
+        <li><b>Dane pod umową</b>Przy każdym wdrożeniu podpisujemy umowę powierzenia danych.</li>
       </ul>
-      <p class="kontakt" id="kontakt-tekst" hidden></p>
+      <p class="tylko-podglad">Notatka widoczna tylko w podglądzie: tu przyda się Twoje zdjęcie (KONFIG.zdjecie) i 1–2 zdania od Ciebie (KONFIG.oMnie). Do tego czasu jest monogram.</p>
     </div>
-    <form class="formularz" id="formularz" name="audyt" method="POST" data-netlify="true" netlify-honeypot="website" novalidate>
+  </div>
+</section>
+
+<section class="pas" id="pytania" aria-labelledby="h-pytania">
+  <div class="kol pytania-w">
+    <div class="naglowek-s wejscie">
+      <h2 id="h-pytania">O co pytają właściciele</h2>
+      <p class="lead">Nie ma tu Twojego pytania? Zadaj je Kamilowi: <a class="lacze nw" data-tel-href href="tel:+48412306785"><span data-tel-tekst>41 230 67 85</span></a>.</p>
+    </div>
+    <div class="akordeon wejscie" id="akordeon" style="--i:1">
+      <div class="pyt"><h3><button type="button" aria-controls="odp-1" id="pyt-1"><span>Nie mam czasu na wdrożenia. Ile to zajmie mnie?</span><span class="strzalka"><svg class="ik" aria-hidden="true"><use href="#i-dol"/></svg></span></button></h3><div class="odp" id="odp-1" role="region" aria-labelledby="pyt-1"><div><p>Dwa spotkania po 45 minut: start i odbiór. Resztę robimy my. System ma Ci oddać czas, a nie go zabrać.</p></div></div></div>
+      <div class="pyt"><h3><button type="button" aria-controls="odp-2" id="pyt-2"><span>Czy asystent nie powie klientowi głupot?</span><span class="strzalka"><svg class="ik" aria-hidden="true"><use href="#i-dol"/></svg></span></button></h3><div class="odp" id="odp-2" role="region" aria-labelledby="pyt-2"><div><p>Asystent mówi i wysyła tylko to, co wcześniej zatwierdzisz: powitanie, pytania, potwierdzenie, przypomnienia. Nie podaje cen ani terminów montażu. Wycenę zawsze wysyłasz Ty.</p></div></div></div>
+      <div class="pyt"><h3><button type="button" aria-controls="odp-3" id="pyt-3"><span>Moi klienci wolą dzwonić.</span><span class="strzalka"><svg class="ik" aria-hidden="true"><use href="#i-dol"/></svg></span></button></h3><div class="odp" id="odp-3" role="region" aria-labelledby="pyt-3"><div><p>Telefon zostaje. Połączenia, których nie odbierzesz, przejmuje asystent: rozmawia, dopytuje o szczegóły i zapisuje zgłoszenie. Klient dostaje SMS z potwierdzeniem.</p></div></div></div>
+      <div class="pyt"><h3><button type="button" aria-controls="odp-4" id="pyt-4"><span>Mamy już swój program. Trzeba go zmieniać?</span><span class="strzalka"><svg class="ik" aria-hidden="true"><use href="#i-dol"/></svg></span></button></h3><div class="odp" id="odp-4" role="region" aria-labelledby="pyt-4"><div><p>Nie. Podłączamy się do poczty, strony i telefonu, których już używasz. Lejek sprzedaży to zwykły arkusz, który widzisz na telefonie.</p></div></div></div>
+      <div class="pyt"><h3><button type="button" aria-controls="odp-5" id="pyt-5"><span>Co z danymi klientów?</span><span class="strzalka"><svg class="ik" aria-hidden="true"><use href="#i-dol"/></svg></span></button></h3><div class="odp" id="odp-5" role="region" aria-labelledby="pyt-5"><div><p>Każda firma ma własny serwer w Unii Europejskiej i własne konta. Podpisujemy umowę powierzenia przetwarzania danych. Przy rozstaniu przekazujemy dostęp i eksport.</p></div></div></div>
+      <div class="pyt"><h3><button type="button" aria-controls="odp-6" id="pyt-6"><span>Czy system pisze do ludzi, którzy o nic nie pytali?</span><span class="strzalka"><svg class="ik" aria-hidden="true"><use href="#i-dol"/></svg></span></button></h3><div class="odp" id="odp-6" role="region" aria-labelledby="pyt-6"><div><p>Nie. Odpowiada wyłącznie osobom, które same się zgłosiły, i tylko w sprawie ich zapytania.</p></div></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="pas zolty" id="audyt" aria-labelledby="h-audyt">
+  <div class="kol audyt">
+    <div class="audyt-tekst wejscie">
+      <h2 id="h-audyt">Bezpłatny audyt: 30 minut w Twojej firmie</h2>
+      <ul class="ptaszki">
+        <li><span class="kolko"><svg class="ik" aria-hidden="true"><use href="#i-ptak"/></svg></span>Liczymy zapytania i nieodebrane telefony z ostatniego tygodnia</li>
+        <li><span class="kolko"><svg class="ik" aria-hidden="true"><use href="#i-ptak"/></svg></span>Pokazujemy demo na Twoim telefonie</li>
+        <li><span class="kolko"><svg class="ik" aria-hidden="true"><use href="#i-ptak"/></svg></span>Zostawiamy wynik na jednej stronie, bez zobowiązań</li>
+      </ul>
+      <p class="kontakt-t" id="kontakt-tekst" hidden></p>
+    </div>
+    <form class="formularz wejscie" style="--i:1" id="formularz" name="audyt" method="POST" data-netlify="true" netlify-honeypot="website" novalidate>
       <input type="hidden" name="form-name" value="audyt">
-      <label>Imię<input id="f-imie" name="imie" autocomplete="given-name" required maxlength="60"></label>
-      <label>Firma<input id="f-firma" name="firma" autocomplete="organization" maxlength="80"></label>
-      <label>Telefon<input id="f-telefon" name="telefon" type="tel" autocomplete="tel" inputmode="tel" required maxlength="20"></label>
-      <label>E-mail (opcjonalnie)<input id="f-email" name="email" type="email" autocomplete="email" maxlength="120"></label>
-      <label class="cala">Branża<select id="f-branza" name="branza"><option>Okna i drzwi</option><option>Kuchnie i meble na wymiar</option><option>Klimatyzacja, pompy ciepła, fotowoltaika</option><option>Łazienki, podłogi, wykończenia</option><option>Bramy i ogrodzenia</option><option>Inna</option></select></label>
-      <label class="cala">Kiedy najlepiej zadzwonić? (opcjonalnie)<textarea id="f-wiadomosc" name="wiadomosc" maxlength="600"></textarea></label>
+      <input type="hidden" name="zrodlo" value="Strona Odzew">
+      <div class="pole"><label for="f-imie">Imię</label><input id="f-imie" name="imie" autocomplete="given-name" required maxlength="60" aria-describedby="e-imie"><p class="blad-pola" id="e-imie" hidden></p></div>
+      <div class="pole"><label for="f-firma">Firma <span>(opcjonalnie)</span></label><input id="f-firma" name="firma" autocomplete="organization" maxlength="80"></div>
+      <div class="pole"><label for="f-telefon">Telefon</label><input id="f-telefon" name="telefon" type="tel" autocomplete="tel" inputmode="tel" required maxlength="20" aria-describedby="e-telefon"><p class="blad-pola" id="e-telefon" hidden></p></div>
+      <div class="pole"><label for="f-email">E-mail <span>(opcjonalnie)</span></label><input id="f-email" name="email" type="email" autocomplete="email" maxlength="120" aria-describedby="e-email"><p class="blad-pola" id="e-email" hidden></p></div>
+      <div class="pole cala"><label for="f-branza">Branża</label><select id="f-branza" name="branza"><option>Okna i drzwi</option><option>Kuchnie i meble na wymiar</option><option>Klimatyzacja, pompy ciepła, fotowoltaika</option><option>Łazienki, podłogi, wykończenia</option><option>Bramy i ogrodzenia</option><option>Inna</option></select></div>
+      <div class="pole cala"><label for="f-wiadomosc">Kiedy najlepiej zadzwonić? <span>(opcjonalnie)</span></label><textarea id="f-wiadomosc" name="wiadomosc" maxlength="600"></textarea></div>
       <label class="pulapka" aria-hidden="true">Strona www<input id="f-website" name="website" tabindex="-1" autocomplete="off"></label>
-      <p class="info cala">Wysyłając formularz, prosisz o kontakt w sprawie audytu. Twoje dane wykorzystamy tylko do tego. Szczegóły znajdziesz w polityce prywatności na dole strony.</p>
+      <p class="info cala">Wysyłając formularz, prosisz o kontakt w sprawie audytu. Twoje dane wykorzystamy tylko do tego. Szczegóły znajdziesz w <a class="lacze" href="%%BAZA%%polityka-prywatnosci/">polityce prywatności</a>.</p>
       <button class="przycisk cala" type="submit" id="f-wyslij">Proszę o kontakt</button>
-      <p class="komunikat cala" id="f-komunikat" role="status" hidden></p>
+      <div class="komunikat cala" id="f-komunikat" role="status" hidden><svg class="ik" aria-hidden="true"><use href="#i-ptak"/></svg><span></span></div>
     </form>
   </div>
 </section>
 
 </main>
 
+<!--wspolne:stopka-->
 <footer class="stopka">
   <div class="kol">
-    %%LOGO_CIEMNE%%
-    <p>Odzew. Automatyzacje dla firm, które sprzedają na wycenę. Kielce i województwo świętokrzyskie.</p>
-    <p id="stopka-kontakt" hidden></p>
-    <details id="prywatnosc">
-      <summary>Polityka prywatności</summary>
-      <p><b>Administrator danych:</b> <span id="pp-administrator">[uzupełnij dane firmy w KONFIG.administrator]</span>.</p>
-      <p><b>Jakie dane i po co:</b> imię, nazwa firmy, telefon, e-mail i treść wiadomości z formularza. Używamy ich wyłącznie po to, żeby odpowiedzieć na Twoją prośbę o kontakt i umówić audyt (art. 6 ust. 1 lit. b i f RODO).</p>
-      <p><b>Komu je powierzamy:</b> dostawcom, z których korzystamy przy obsłudze zgłoszeń: hostingu i serwera w Unii Europejskiej, poczty elektronicznej i bramki SMS. Nie sprzedajemy danych i nie przekazujemy ich do celów reklamowych.</p>
-      <p><b>Jak długo:</b> do 12 miesięcy od ostatniego kontaktu, a jeśli zostaniesz klientem, przez czas trwania umowy i okres wymagany przepisami.</p>
-      <p><b>Twoje prawa:</b> dostęp do danych, sprostowanie, usunięcie, ograniczenie przetwarzania, sprzeciw oraz skarga do Prezesa Urzędu Ochrony Danych Osobowych. Wystarczy wiadomość na adres podany w kontakcie.</p>
-      <p><b>Pliki cookie i śledzenie:</b> ta strona nie używa plików cookie do analityki ani reklam. Czcionki są wczytywane z naszego serwera. Kalkulator liczy wszystko w Twojej przeglądarce.</p>
-    </details>
+    <div class="stopka-w">
+      <div class="stopka-marka">
+        %%LOGO_CIEMNE%%
+        <p class="haslo">Żadne zapytanie nie przepada.</p>
+      </div>
+      <nav aria-label="W stopce">
+        <h2>Na stronie</h2>
+        <ul>
+          <li><a href="%%BAZA%%#przetestuj">Przetestuj asystenta</a></li>
+          <li><a href="%%BAZA%%#jak">Jak to działa</a></li>
+          <li><a href="%%BAZA%%#kalkulator">Kalkulator strat</a></li>
+          <li><a href="%%BAZA%%#cennik">Cennik</a></li>
+          <li><a href="%%BAZA%%#pytania">Pytania</a></li>
+          <li><a href="%%BAZA%%#audyt">Bezpłatny audyt</a></li>
+        </ul>
+      </nav>
+      <div>
+        <h2>Kontakt</h2>
+        <ul>
+          <li data-tel-blok>Kamil, wirtualny asystent, całą dobę: <a class="nw" data-tel-href href="tel:+48412306785"><span data-tel-tekst>41 230 67 85</span></a></li>
+          <li id="st-telefon" hidden></li>
+          <li id="st-email" hidden></li>
+          <li>Kielce i województwo świętokrzyskie</li>
+        </ul>
+      </div>
+      <div>
+        <h2>Firma</h2>
+        <ul>
+          <li id="st-firma" hidden></li>
+          <li><a href="%%BAZA%%polityka-prywatnosci/">Polityka prywatności</a></li>
+          <li>Realizacja: <a href="https://www.visilogo.com" rel="noopener">VisiLogo</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="tylko-podglad" style="margin-top:28px">Notatka widoczna tylko w podglądzie: po uzupełnieniu KONFIG.telefon, KONFIG.email i KONFIG.administrator w tej stopce pojawią się telefon, e-mail i dane firmy.</p>
+    <div class="stopka-dol"><span>© <span id="rok">2026</span> Odzew</span><span>Wirtualny asystent telefoniczny dla firm, które sprzedają na wycenę.</span></div>
   </div>
 </footer>
+<!--/wspolne:stopka-->
+
+<!--wspolne:skrypt-->
+<script>
+/* Część wspólna dla wszystkich podstron: nagłówek, menu, numer asystenta, dane ze stopki. */
+(function () {
+  const $ = id => document.getElementById(id);
+  const telHref = n => 'tel:+48' + n.replace(/\D/g, '').replace(/^48(?=\d{9}$)/, '');
+
+  // nagłówek zmniejsza się po przewinięciu
+  const gora = $('gora'); let czeka = false;
+  function przewin() { czeka = false; gora.classList.toggle('mala', window.scrollY > 24); }
+  window.addEventListener('scroll', () => { if (!czeka) { czeka = true; requestAnimationFrame(przewin); } }, { passive: true });
+  przewin();
+
+  // menu na telefonie
+  const mp = $('menu-p'), nav = $('nawigacja');
+  function menu(otw) { nav.classList.toggle('otwarte', otw); mp.setAttribute('aria-expanded', String(otw)); }
+  mp.addEventListener('click', () => menu(mp.getAttribute('aria-expanded') !== 'true'));
+  nav.addEventListener('click', e => { if (e.target.closest('a')) menu(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && mp.getAttribute('aria-expanded') === 'true') { menu(false); mp.focus(); } });
+
+  // numer, pod którym odbiera asystent
+  if (KONFIG.telefonDemo) {
+    document.querySelectorAll('[data-tel-tekst]').forEach(e => { e.textContent = KONFIG.telefonDemo; });
+    document.querySelectorAll('[data-tel-href]').forEach(e => { e.href = telHref(KONFIG.telefonDemo); });
+  } else {
+    document.querySelectorAll('[data-tel-href], [data-tel-blok]').forEach(e => { e.hidden = true; });
+  }
+
+  // stopka: puste pola z KONFIG po prostu się nie pokazują
+  function lacze(href, tekst) { const a = document.createElement('a'); a.href = href; a.textContent = tekst; a.className = 'nw'; return a; }
+  if (KONFIG.telefon) { const e = $('st-telefon'); e.append('Biuro: ', lacze(telHref(KONFIG.telefon), KONFIG.telefon)); e.hidden = false; }
+  if (KONFIG.email) { const e = $('st-email'); e.append(lacze('mailto:' + KONFIG.email, KONFIG.email)); e.hidden = false; }
+  if (KONFIG.administrator) { const e = $('st-firma'); e.textContent = KONFIG.administrator; e.hidden = false; }
+  $('rok').textContent = new Date().getFullYear();
+
+  window.ODZEW = { $, telHref, lacze };
+})();
+</script>
+<!--/wspolne:skrypt-->
 
 <script>
 (function () {
-  const zl = n => Math.round(n).toLocaleString('pl-PL').replace(/ | /g, ' ') + ' zł';
-  const el = id => document.getElementById(id);
+  const { $, telHref, lacze } = window.ODZEW;
+  const ruch = !window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window;
+  const zl = n => Math.round(n).toLocaleString('pl-PL').replace(/\s/g, ' ') + ' zł';
+  const lagodnie = p => 1 - Math.pow(1 - p, 3);
 
-  // ----- film na górze strony: plakat z przyciskiem, po kliknięciu zwykły odtwarzacz z dźwiękiem -----
-  const film = el('film'), filmStart = el('film-start');
-  if (film && filmStart) {
-    film.controls = false; filmStart.hidden = false;
-    const wlacz = () => { filmStart.hidden = true; film.controls = true; };
-    filmStart.addEventListener('click', () => { wlacz(); const p = film.play(); if (p) p.catch(() => {}); film.focus(); });
-    film.addEventListener('play', wlacz);
+  // ----- ruch: wejścia sekcji przy pierwszym pojawieniu się (bez ruchu treść jest od razu widoczna) -----
+  function gdyWidac(el, prog, fn) {
+    const io = new IntersectionObserver(wp => wp.forEach(w => { if (w.isIntersecting) { io.disconnect(); fn(); } }), { threshold: prog });
+    io.observe(el);
+  }
+  if (ruch) {
+    document.documentElement.classList.add('ruch');
+    document.querySelectorAll('.wejscie, [data-wejscie], .raport').forEach(el => gdyWidac(el, 0.12, () => {
+      el.classList.add('widac');
+      el.dispatchEvent(new CustomEvent('widac'));
+    }));
   }
 
-  // ----- kalkulator strat -----
+  // ----- liczniki przy liczbach ze źródłem -----
+  function licz(el, cel, ms) {
+    const przed = el.dataset.przed || '', po = el.dataset.po || '', t0 = performance.now();
+    (function krok(t) { const p = Math.min(1, (t - t0) / ms); el.textContent = przed + Math.round(cel * lagodnie(p)) + po; if (p < 1) requestAnimationFrame(krok); })(t0);
+  }
+  document.querySelectorAll('.liczby').forEach(b => b.addEventListener('widac', () => b.querySelectorAll('[data-licz]').forEach(e => licz(e, +e.dataset.licz, 500))));
+
+  // ----- scena na pierwszym ekranie: telefon dzwoni, Kamil odbiera, SMS, wpis w lejku -----
+  const scena = $('scena'), stan = $('tel-stan');
+  if (ruch) {
+    const koniec = stan.textContent;
+    scena.classList.add('gra');
+    stan.textContent = 'Połączenie przychodzące…';
+    gdyWidac(scena, 0.35, () => {
+      setTimeout(() => { scena.classList.add('s1'); stan.textContent = 'Odbiera Kamil, wirtualny asystent'; }, 1100);
+      setTimeout(() => scena.classList.add('s2'), 2500);
+      setTimeout(() => { scena.classList.add('s3'); stan.textContent = koniec; }, 3200);
+    });
+  }
+
+  // ----- zapis rozmowy: linia po linii; na telefonie zwinięty do trzech wymian -----
+  const zapis = $('zapis'), wiecej = $('zapis-wiecej'), waski = window.matchMedia('(max-width: 900px)');
+  const linie = Array.from(zapis.querySelectorAll('.kw'));
+  let odtworzony = false;
+  function odtworz(lista, odstep) { lista.forEach((l, i) => setTimeout(() => l.classList.remove('czeka'), i * odstep)); }
+  function zwijanie() {
+    zapis.classList.toggle('zwijany', waski.matches);
+    if (!waski.matches && odtworzony) odtworz(linie.filter(l => l.classList.contains('czeka')), 250);
+  }
+  zwijanie();
+  waski.addEventListener('change', zwijanie);
+  wiecej.addEventListener('click', () => {
+    const otw = !zapis.classList.contains('otwarty');
+    zapis.classList.toggle('otwarty', otw);
+    wiecej.setAttribute('aria-expanded', String(otw));
+    wiecej.firstElementChild.textContent = otw ? 'Zwiń rozmowę' : 'Pokaż całą rozmowę';
+    if (otw) odtworz(linie.filter(l => l.classList.contains('czeka')), 350);
+  });
+  if (ruch) {
+    linie.forEach(l => l.classList.add('czeka'));
+    gdyWidac(zapis, 0.3, () => { odtworzony = true; odtworz(waski.matches ? linie.slice(0, 6) : linie, 550); });
+  }
+
+  // ----- film: plakat z przyciskiem, po kliknięciu zwykły odtwarzacz z dźwiękiem -----
+  const film = $('film'), filmStart = $('film-start');
+  film.controls = false; filmStart.hidden = false;
+  const wlacz = () => { filmStart.hidden = true; film.controls = true; };
+  filmStart.addEventListener('click', () => { wlacz(); const p = film.play(); if (p) p.catch(() => {}); film.focus(); });
+  film.addEventListener('play', wlacz);
+
+  // ----- kalkulator strat (wzory bez zmian) -----
+  let pokazana = null, klatka = 0, srCzas = 0, ostatnia = 0;
+  function pokazStrate(cel, ms) {
+    cancelAnimationFrame(klatka);
+    if (!ruch || pokazana === null) { pokazana = cel; $('w-strata').textContent = zl(cel); return; }
+    const od = pokazana, t0 = performance.now();
+    (function krok(t) { const p = Math.min(1, (t - t0) / ms); pokazana = od + (cel - od) * lagodnie(p); $('w-strata').textContent = zl(pokazana); if (p < 1) klatka = requestAnimationFrame(krok); })(t0);
+  }
   function policz() {
-    const zap = +el('k-zap').value, bez = +el('k-bez').value / 100, odch = +el('k-odch').value / 100,
-          skut = +el('k-skut').value / 100, wart = +el('k-wart').value;
-    el('o-zap').textContent = zap;
-    el('o-bez').textContent = Math.round(bez * 100) + '%';
-    el('o-odch').textContent = Math.round(odch * 100) + '%';
-    el('o-skut').textContent = Math.round(skut * 100) + '%';
-    el('o-wart').textContent = zl(wart);
+    const zap = +$('k-zap').value, bez = +$('k-bez').value / 100, odch = +$('k-odch').value / 100,
+          skut = +$('k-skut').value / 100, wart = +$('k-wart').value;
+    $('o-zap').textContent = zap;
+    $('o-bez').textContent = Math.round(bez * 100) + '%';
+    $('o-odch').textContent = Math.round(odch * 100) + '%';
+    $('o-skut').textContent = Math.round(skut * 100) + '%';
+    $('o-wart').textContent = zl(wart);
     const zlecenia = zap * bez * odch * skut * 12;
     const strata = zlecenia * wart;
-    el('w-strata').textContent = zl(strata);
-    el('w-bez').textContent = Math.round(zap * bez) + ' miesięcznie';
-    el('w-zlec').textContent = (Math.round(zlecenia * 10) / 10).toLocaleString('pl-PL');
+    ostatnia = strata;
+    pokazStrate(strata, 300);
+    $('w-bez').textContent = Math.round(zap * bez) + ' miesięcznie';
+    $('w-zlec').textContent = (Math.round(zlecenia * 10) / 10).toLocaleString('pl-PL');
     const ile = Math.ceil(9278 / wart);
-    el('w-zwrot').textContent = ile + (ile === 1 ? ' uratowanym zleceniu' : ' uratowanych zleceniach');
+    $('w-zwrot').textContent = ile + (ile === 1 ? ' uratowanym zleceniu' : ' uratowanych zleceniach');
+    document.querySelectorAll('#kalk .suwak').forEach(s => s.style.setProperty('--p', ((s.value - s.min) / (s.max - s.min) * 100) + '%'));
+    clearTimeout(srCzas);
+    srCzas = setTimeout(() => { $('w-sr').textContent = 'Szacowana strata w roku: ' + zl(strata) + '.'; }, 700);
   }
   document.querySelectorAll('#kalk input').forEach(i => i.addEventListener('input', policz));
   policz();
+  clearTimeout(srCzas);
+  if (ruch) $('wynik').addEventListener('widac', () => { pokazana = 0; pokazStrate(ostatnia, 500); });
 
-  // ----- dane kontaktowe z konfiguracji -----
-  const czesci = [];
-  if (KONFIG.telefon) czesci.push('tel. ' + KONFIG.telefon);
-  if (KONFIG.email) czesci.push(KONFIG.email);
-  if (czesci.length) {
-    el('kontakt-tekst').textContent = 'Wolisz zadzwonić? ' + czesci.join(' · ');
-    el('kontakt-tekst').hidden = false;
-    el('stopka-kontakt').textContent = 'Kontakt: ' + czesci.join(' · ');
-    el('stopka-kontakt').hidden = false;
+  // ----- cennik: na telefonie dwa mniejsze pakiety mają listę pod przyciskiem -----
+  const maly = window.matchMedia('(max-width: 600px)');
+  const zwijanePlany = Array.from(document.querySelectorAll('.plan')).filter(p => p.querySelector('.plan-wiecej'));
+  function plany() { zwijanePlany.forEach(p => p.classList.toggle('zwijany', maly.matches)); }
+  plany();
+  maly.addEventListener('change', plany);
+  zwijanePlany.forEach(p => {
+    const b = p.querySelector('.plan-wiecej');
+    b.addEventListener('click', () => { const otw = !p.classList.contains('otwarty'); p.classList.toggle('otwarty', otw); b.setAttribute('aria-expanded', String(otw)); });
+  });
+
+  // ----- pytania: rozwijanie -----
+  const ak = $('akordeon');
+  ak.classList.add('js');
+  ak.querySelectorAll('.pyt').forEach(p => {
+    const b = p.querySelector('button');
+    b.setAttribute('aria-expanded', 'false');
+    b.addEventListener('click', () => { const otw = !p.classList.contains('otwarte'); p.classList.toggle('otwarte', otw); b.setAttribute('aria-expanded', String(otw)); });
+  });
+
+  // ----- dane z konfiguracji -----
+  if (KONFIG.telefon || KONFIG.email) {
+    const k = $('kontakt-tekst');
+    k.append('Wolisz napisać albo zadzwonić? ');
+    if (KONFIG.telefon) k.append(lacze(telHref(KONFIG.telefon), KONFIG.telefon));
+    if (KONFIG.telefon && KONFIG.email) k.append(', ');
+    if (KONFIG.email) k.append(lacze('mailto:' + KONFIG.email, KONFIG.email));
+    k.querySelectorAll('a').forEach(a => a.classList.add('lacze'));
+    k.hidden = false;
   }
-  if (KONFIG.administrator) el('pp-administrator').textContent = KONFIG.administrator;
-
-
-  // ----- sekretarka demo -----
-  if (KONFIG.telefonDemo) {
-    const n = el('numer-demo');
-    n.textContent = KONFIG.telefonDemo;
-    n.href = 'tel:+48' + KONFIG.telefonDemo.replace(/\D/g, '').replace(/^48(?=\d{9}$)/, '');
-    n.classList.remove('brak');
-    // Same zera oznaczają numer przykładowy: strona mówi o tym wprost, żeby nikt nie dzwonił w próżnię.
-    if (/^0+$/.test(KONFIG.telefonDemo.replace(/\D/g, ''))) { n.removeAttribute('href'); el('numer-opis').innerHTML = '<b>To numer przykładowy.</b> Prawdziwy pojawi się tu po uruchomieniu linii.'; }
+  if (KONFIG.wlasciciel) {
+    $('kto-imie').textContent = KONFIG.wlasciciel;
+    $('portret').textContent = KONFIG.wlasciciel.split(/\s+/).map(s => s[0]).join('').slice(0, 2).toUpperCase();
+  }
+  if (KONFIG.zdjecie) {
+    const img = new Image(); img.src = KONFIG.zdjecie; img.alt = KONFIG.wlasciciel || 'Właściciel Odzewu'; img.loading = 'lazy'; img.width = 600; img.height = 600;
+    const p = $('portret'); p.textContent = ''; p.removeAttribute('aria-hidden'); p.append(img);
+  }
+  if (KONFIG.oMnie) { $('kto-omnie').textContent = KONFIG.oMnie; $('kto-omnie').hidden = false; }
+  if (KONFIG.nagranie) {
+    $('nagranie-audio').src = KONFIG.nagranie;
+    $('nagranie-opis').textContent = KONFIG.nagranieOpis || '';
+    $('nagranie').hidden = false;
   }
   if (KONFIG.agentId) {
-    const b = el('rozmowa-start');
+    const b = $('rozmowa-start');
     b.hidden = false;
     b.addEventListener('click', function () {
       if (!document.querySelector('elevenlabs-convai')) {
@@ -536,18 +1112,41 @@ details p { margin-top: 10px; color: var(--stal); max-width: 70ch; }
   }
 
   // ----- formularz audytu -----
-  const f = el('formularz'), kom = el('f-komunikat'), btn = el('f-wyslij');
-  function pokaz(typ, tekst) { kom.className = 'komunikat cala ' + typ; kom.textContent = tekst; kom.hidden = false; }
+  const f = $('formularz'), kom = $('f-komunikat'), btn = $('f-wyslij');
+  function pokaz(typ, tekst) {
+    kom.className = 'komunikat cala ' + typ;
+    kom.setAttribute('role', typ === 'blad' ? 'alert' : 'status');
+    kom.querySelector('use').setAttribute('href', typ === 'blad' ? '#i-uwaga' : '#i-ptak');
+    kom.querySelector('span').textContent = tekst;
+    kom.hidden = false;
+  }
+  function blad(pole, tekst) {
+    const p = $('f-' + pole), e = $('e-' + pole);
+    if (tekst) { p.setAttribute('aria-invalid', 'true'); e.textContent = tekst; e.hidden = false; }
+    else { p.removeAttribute('aria-invalid'); e.hidden = true; }
+    return !!tekst;
+  }
+  ['imie', 'telefon', 'email'].forEach(n => $('f-' + n).addEventListener('input', () => blad(n, '')));
+  document.querySelectorAll('[data-pakiet]').forEach(a => a.addEventListener('click', () => {
+    const w = $('f-wiadomosc');
+    if (!w.value.trim() || w.dataset.auto) { w.value = 'Interesuje mnie pakiet ' + a.dataset.pakiet + '.'; w.dataset.auto = '1'; }
+  }));
+  $('f-wiadomosc').addEventListener('input', e => { delete e.target.dataset.auto; });
   f.addEventListener('submit', async function (e) {
     e.preventDefault();
-    const imie = el('f-imie').value.trim(), tel = el('f-telefon').value.replace(/\D/g, '');
-    if (!imie) { pokaz('blad', 'Podaj imię, żebyśmy wiedzieli, o kogo zapytać.'); el('f-imie').focus(); return; }
-    if (tel.length < 9) { pokaz('blad', 'Podaj numer telefonu z 9 cyframi.'); el('f-telefon').focus(); return; }
+    kom.hidden = true;
+    const imie = $('f-imie').value.trim(), tel = $('f-telefon').value.replace(/\D/g, ''), email = $('f-email').value.trim();
+    const zle = [
+      blad('imie', imie ? '' : 'Podaj imię, żebyśmy wiedzieli, o kogo zapytać.') && 'imie',
+      blad('telefon', tel.length >= 9 ? '' : 'Podaj numer telefonu z 9 cyframi.') && 'telefon',
+      blad('email', !email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? '' : 'Sprawdź adres e-mail albo zostaw pole puste.') && 'email'
+    ].filter(Boolean);
+    if (zle.length) { pokaz('blad', 'Popraw zaznaczone pola i wyślij jeszcze raz.'); $('f-' + zle[0]).focus(); return; }
     const pola = {
-      imie: imie, telefon: el('f-telefon').value, email: el('f-email').value.trim(),
-      firma: el('f-firma').value.trim(), branza: el('f-branza').value,
-      wiadomosc: ['Audyt', el('f-firma').value.trim(), el('f-branza').value, el('f-wiadomosc').value.trim()].filter(Boolean).join(' | '),
-      zrodlo: 'Strona Odzew', website: el('f-website').value
+      imie: imie, telefon: $('f-telefon').value, email: email,
+      firma: $('f-firma').value.trim(), branza: $('f-branza').value,
+      wiadomosc: ['Audyt', $('f-firma').value.trim(), $('f-branza').value, $('f-wiadomosc').value.trim()].filter(Boolean).join(' | '),
+      zrodlo: 'Strona Odzew', website: $('f-website').value
     };
     // Bez adresu automatyzacji zgłoszenie zbiera hosting (Netlify Forms) i wysyła je e-mailem.
     const naHosting = !KONFIG.webhook;

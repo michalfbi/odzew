@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pl" class="podglad">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Polityka prywatności – Odzew</title>
+<meta name="description" content="Jak Odzew przetwarza dane z formularza i z rozmów z wirtualnym asystentem.">
+<meta name="theme-color" content="#FFC21A">
+<link rel="canonical" href="https://odzew.tech/polityka-prywatnosci/">
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByb2xlPSJpbWciIGFyaWEtbGFiZWw9Ik9kemV3Ij48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwIDApIHNjYWxlKDEpIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHJ4PSIxNCIgZmlsbD0iI0ZGQzIxQSIvPjxyZWN0IHg9IjI4IiB5PSI2IiB3aWR0aD0iOCIgaGVpZ2h0PSI2IiByeD0iMiIgZmlsbD0iIzE2MTgxQiIvPjxjaXJjbGUgY3g9IjMyIiBjeT0iMzMiIHI9IjE3IiBmaWxsPSJub25lIiBzdHJva2U9IiMxNjE4MUIiIHN0cm9rZS13aWR0aD0iNyIvPjxwYXRoIGQ9Ik0xOS41IDQ0LjUgTDEyIDU1IEwyNiA1MC41IFoiIGZpbGw9IiMxNjE4MUIiLz48cGF0aCBkPSJNMzIgMzMgTDM5LjUgMjUuNSIgc3Ryb2tlPSIjMTYxODFCIiBzdHJva2Utd2lkdGg9IjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjMyIiBjeT0iMzMiIHI9IjMuNSIgZmlsbD0iIzE2MTgxQiIvPjwvZz48L3N2Zz4=">
+<link rel="preload" href="/czcionki/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/czcionki/barlow-latin-ext-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/czcionki/barlow-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/czcionki/barlow-latin-ext-800-normal.woff2" as="font" type="font/woff2" crossorigin>
+<script>
+/* ====== KONFIGURACJA STRONY: uzupełnij przed publikacją ======
+   Puste pole nie pokazuje się na stronie. Nic nie trzeba kasować. */
+const KONFIG = {
+  webhook: '',        // adres automatyzacji 01, np. https://automaty.odzew.tech/webhook/odzew/zapytanie. Puste = zgłoszenia zbiera Netlify Forms
+  telefon: '',        // telefon kontaktowy do stopki i formularza, np. 600 100 200
+  email: '',          // np. kontakt@odzew.tech
+  administrator: '',  // dane firmy do stopki i polityki prywatności, np. Jan Kowalski VisiLogo, ul. Przykładowa 1, 25-000 Kielce, NIP 0000000000
+  telefonDemo: '41 230 67 85', // numer, pod którym odbiera Kamil, wirtualny asystent
+  agentId: '',        // puste = bez rozmowy przez przeglądarkę, test tylko przez telefon
+
+  /* --- sekcja „Kto za tym stoi” --- */
+  wlasciciel: 'Michał Pakuła',
+  zdjecie: '',        // adres zdjęcia właściciela, np. /obrazy/michal.jpg (kwadrat, co najmniej 600 px). Puste = monogram
+  oMnie: '',          // 1–2 zdania od siebie: skąd pomysł, czym zajmujesz się na co dzień
+
+  /* --- nagranie prawdziwej rozmowy z asystentem --- */
+  nagranie: '',       // adres pliku MP3, np. /nagrania/rozmowa-okna.mp3. Puste = blok nagrania jest ukryty
+  nagranieOpis: ''    // np. Rozmowa z 12 stycznia, firma okienna z Kielc. Opublikowana za zgodą klienta.
+};
+</script>
+<style>
+@font-face{font-family:'Barlow';font-style:normal;font-weight:400;font-display:swap;src:url(/czcionki/barlow-latin-400-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Barlow';font-style:normal;font-weight:400;font-display:swap;src:url(/czcionki/barlow-latin-ext-400-normal.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Barlow';font-style:normal;font-weight:600;font-display:swap;src:url(/czcionki/barlow-latin-600-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Barlow';font-style:normal;font-weight:600;font-display:swap;src:url(/czcionki/barlow-latin-ext-600-normal.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Barlow';font-style:normal;font-weight:800;font-display:swap;src:url(/czcionki/barlow-latin-800-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Barlow';font-style:normal;font-weight:800;font-display:swap;src:url(/czcionki/barlow-latin-ext-800-normal.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+:root {
+  /* Kierunek i role kolorów: patrz DESIGN.md */
+  --sygnal: #FFC21A; --sygnal-cien: #C99400; --sygnal-jasny: #FFF1C2;
+  --grafit: #16181B; --grafit-2: #22252A; --grafit-3: #3A3F46;
+  --papier: #FFFFFF; --beton: #F2F3F0; --linia: #D9DCD6;
+  --stal: #565B62; --mgla: #C6CACF; --popiol: #9CA2A9;
+  --alarm: #B92D1C; --alarm-tlo: #FBE1DD; --ok: #1B6B36; --ok-tlo: #DDF3E1;
+  --kroj: 'Barlow', 'Arial Narrow', Arial, Helvetica, sans-serif;
+  --t-h1: clamp(2.375rem, 1.2rem + 4.9vw, 4.5rem);
+  --t-h2: clamp(1.875rem, 1.3rem + 2.5vw, 3rem);
+  --t-h3: 1.375rem;
+  --t-lead: clamp(1.125rem, 1rem + 0.5vw, 1.3125rem);
+  --t-tekst: 1.125rem; --t-maly: 0.9375rem; --t-mini: 0.875rem;
+  --r-1: 8px; --r-2: 14px; --r-3: 24px;
+  --margines: clamp(20px, 4vw, 40px);
+  --luz: cubic-bezier(.2, .7, .2, 1);
+  --cien: var(--sygnal); --drugi: var(--stal); --fokus: var(--grafit);
+  color-scheme: light;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 84px; -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--papier); color: var(--grafit); font: 400 var(--t-tekst)/1.55 var(--kroj); }
+h1, h2, h3 { font-weight: 800; margin: 0; letter-spacing: -0.02em; text-wrap: balance; }
+h1 { font-size: var(--t-h1); line-height: 1; }
+h2 { font-size: var(--t-h2); line-height: 1.05; }
+h3 { font-size: var(--t-h3); line-height: 1.2; letter-spacing: -0.01em; }
+p { margin: 0; text-wrap: pretty; }
+a { color: inherit; }
+b, strong { font-weight: 600; }
+ul, ol { margin: 0; padding: 0; }
+img, svg, video { max-width: 100%; }
+button { font: inherit; color: inherit; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 3px solid var(--fokus); outline-offset: 3px; border-radius: 4px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.nw { white-space: nowrap; }
+.ik { width: 1.25em; height: 1.25em; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.skok { position: absolute; left: 12px; top: -80px; z-index: 50; background: var(--grafit); color: #fff; padding: 12px 18px; border-radius: var(--r-1); font-weight: 600; }
+.skok:focus { top: 12px; }
+main:focus { outline: none; }
+
+.kol { width: min(1160px, 100% - 2 * var(--margines)); margin-inline: auto; }
+.pas { padding-block: clamp(44px, 8vw, 96px); }
+.zolty { background: var(--sygnal); --cien: var(--sygnal-cien); --drugi: var(--grafit); }
+.ciemny { background: var(--grafit); color: #fff; --cien: #fff; --drugi: var(--mgla); --fokus: var(--sygnal); }
+.beton { background: var(--beton); --cien: var(--grafit); }
+.naglowek-s { display: flex; flex-direction: column; gap: 16px; max-width: 46rem; margin-bottom: clamp(28px, 5vw, 56px); }
+.lead { font-size: var(--t-lead); line-height: 1.5; color: var(--drugi); max-width: 60ch; }
+.maly { font-size: var(--t-maly); line-height: 1.45; }
+.mini { font-size: var(--t-mini); line-height: 1.4; }
+.lacze { font-weight: 600; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; transition: background-color .2s; border-radius: 2px; }
+.lacze:hover { background: var(--sygnal); color: var(--grafit); }
+.zolty .lacze:hover { background: var(--grafit); color: var(--sygnal); }
+
+/* przyciski */
+.przycisk { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 12px 26px; border-radius: 999px; border: 2px solid var(--grafit); background: var(--grafit); color: #fff; font: 800 1.125rem/1.1 var(--kroj); letter-spacing: -0.005em; text-decoration: none; cursor: pointer; transition: transform .2s var(--luz), box-shadow .2s var(--luz); }
+.przycisk:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--cien); }
+.przycisk:active { transform: translate(1px, 1px); box-shadow: none; }
+.przycisk[disabled] { opacity: .6; cursor: progress; transform: none; box-shadow: none; }
+.przycisk.kontur { background: transparent; color: var(--grafit); --cien: var(--grafit); }
+.ciemny .przycisk { background: var(--sygnal); border-color: var(--sygnal); color: var(--grafit); }
+.przycisk.tel { padding: 6px 24px 6px 8px; gap: 12px; text-align: left; }
+.przycisk.tel .kolko { width: 40px; height: 40px; border-radius: 50%; background: var(--grafit); color: var(--sygnal); display: grid; place-items: center; flex: none; }
+.przycisk.tel .dwa { display: flex; flex-direction: column; gap: 3px; }
+.przycisk.tel small { font: 600 var(--t-mini)/1 var(--kroj); }
+.przycisk.tel b { font: 800 1.25rem/1 var(--kroj); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* nagłówek strony */
+.gora { position: sticky; top: 0; z-index: 30; background: var(--sygnal); border-bottom: 2px solid var(--grafit); --cien: var(--sygnal-cien); }
+.gora-w { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; transition: padding .25s var(--luz); }
+.gora .logo { display: flex; align-items: center; min-height: 44px; border-radius: 6px; }
+.gora .logo svg { height: 40px; width: auto; display: block; transition: height .25s var(--luz); }
+.gora.mala .gora-w { padding-block: 4px; }
+.gora.mala .logo svg { height: 32px; }
+.gora nav { display: flex; align-items: center; gap: 4px; }
+.gora nav a:not(.przycisk) { padding: 10px 12px; font-weight: 600; font-size: 1rem; text-decoration: none; border-radius: var(--r-1); transition: background-color .2s; }
+.gora nav a:not(.przycisk):hover { background: rgba(22, 24, 27, .1); }
+.gora .przycisk { min-height: 44px; padding: 8px 20px; font-size: 1rem; margin-left: 8px; }
+.menu-p { display: none; align-items: center; gap: 8px; min-height: 44px; padding: 8px 14px; border: 2px solid var(--grafit); border-radius: 999px; background: transparent; font-weight: 800; cursor: pointer; }
+@media (max-width: 960px) {
+  .menu-p { display: inline-flex; }
+  .gora nav { display: none; position: absolute; left: 0; right: 0; top: 100%; flex-direction: column; align-items: stretch; gap: 0; padding: 8px var(--margines) 20px; background: var(--sygnal); border-bottom: 2px solid var(--grafit); }
+  .gora nav.otwarte { display: flex; }
+  .gora nav a:not(.przycisk) { padding: 14px 4px; font-size: 1.125rem; border-bottom: 1.5px solid rgba(22, 24, 27, .2); border-radius: 0; }
+  .gora .przycisk { margin: 16px 0 0; min-height: 52px; }
+}
+
+/* stopka */
+.stopka { background: var(--grafit); color: var(--mgla); padding-block: clamp(48px, 6vw, 72px) 28px; font-size: var(--t-maly); --fokus: var(--sygnal); }
+.stopka-w { display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)); gap: 32px 40px; }
+.stopka-marka > svg { height: 38px; width: auto; display: block; margin-bottom: 16px; }
+.stopka .haslo { font: 800 1.375rem/1.15 var(--kroj); color: #fff; letter-spacing: -0.01em; max-width: 14ch; }
+.stopka h2 { font-size: var(--t-mini); line-height: 1.4; letter-spacing: 0; font-weight: 600; color: var(--popiol); margin-bottom: 12px; }
+.stopka ul { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.stopka li { padding-block: 3px; }
+.stopka nav a { display: inline-block; padding-block: 3px; }
+.stopka a { color: #fff; text-decoration: none; border-radius: 2px; }
+.stopka a:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; color: var(--sygnal); }
+.stopka-dol { margin-top: 40px; padding-top: 20px; border-top: 1.5px solid var(--grafit-3); display: flex; flex-wrap: wrap; gap: 8px 28px; justify-content: space-between; font-size: var(--t-mini); color: var(--popiol); }
+.stopka-dol a { color: var(--mgla); text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 900px) { .stopka-w { grid-template-columns: repeat(2, minmax(0, 1fr)); } .stopka-marka { grid-column: 1 / -1; } }
+@media (max-width: 520px) { .stopka-w { gap: 28px 20px; } .stopka nav ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 20px; } .stopka nav { grid-column: 1 / -1; } }
+
+/* notatki widoczne tylko w podglądzie (adres /podglad/), nigdy na stronie głównej */
+.tylko-podglad { display: none; }
+.podglad .tylko-podglad { display: block; border: 2px dashed currentColor; border-radius: var(--r-1); padding: 10px 14px; font-size: var(--t-mini); font-weight: 600; max-width: 60ch; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
+}
+.dokument { max-width: 46rem; display: flex; flex-direction: column; gap: 28px; }
+.dokument h1 { font-size: var(--t-h2); line-height: 1.05; }
+.dokument section { display: flex; flex-direction: column; gap: 8px; border-top: 1.5px solid var(--linia); padding-top: 20px; }
+.dokument h2 { font-size: var(--t-h3); line-height: 1.2; letter-spacing: -0.01em; }
+.dokument p { max-width: 68ch; }
+.dokument .lead { color: var(--stal); }
+.wroc { align-self: flex-start; }
+</style>
+</head>
+<body>
+<a class="skok" href="#tresc">Przejdź do treści</a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-tel" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
+  <symbol id="i-sms" viewBox="0 0 24 24"><path d="M4 5h16v11H10l-5 4v-4H4z"/></symbol>
+  <symbol id="i-lista" viewBox="0 0 24 24"><path d="M4 6h16M4 12h11M4 18h7"/></symbol>
+  <symbol id="i-ptak" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-dol" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-uwaga" viewBox="0 0 24 24"><path d="M12 8v5M12 16.5v.5"/><circle cx="12" cy="12" r="9"/></symbol>
+</svg>
+<header class="gora" id="gora">
+  <div class="kol gora-w">
+    <a class="logo" href="/podglad/" aria-label="Odzew, strona główna"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 246.7 64" role="img" aria-label="Odzew"><g transform="translate(0 0)"><g transform="translate(0 0) scale(1)"><rect width="64" height="64" rx="14" fill="#16181B"/><rect x="28" y="6" width="8" height="6" rx="2" fill="#FFC21A"/><circle cx="32" cy="33" r="17" fill="none" stroke="#FFC21A" stroke-width="7"/><path d="M19.5 44.5 L12 55 L26 50.5 Z" fill="#FFC21A"/><path d="M32 33 L39.5 25.5" stroke="#FFC21A" stroke-width="5" stroke-linecap="round"/><circle cx="32" cy="33" r="3.5" fill="#FFC21A"/></g><path d="M79.52 42.8Q78.8 40.34 78.8 37.4Q78.8 34.1 79.58 31.580000000000002Q80.96 26.84 84.71 24.17Q88.46 21.5 93.8 21.5Q99.08 21.5 102.74000000000001 24.17Q106.4 26.84 107.84 31.52Q108.68 34.22 108.68 37.28Q108.68 40.04 108.02 42.56Q106.75999999999999 47.6 102.97999999999999 50.54Q99.2 53.48 93.74 53.48Q88.34 53.48 84.56 50.599999999999994Q80.78 47.72 79.52 42.8ZM98.3 40.82Q98.66 39.26 98.66 37.4Q98.66 35.6 98.24 33.92Q97.75999999999999 32.06 96.62 31.04Q95.48 30.02 93.74 30.02Q90.26 30.02 89.18 33.92Q88.82 35.36 88.82 37.4Q88.82 39.26 89.18 40.82Q89.66 42.74 90.83 43.85Q92.0 44.96 93.74 44.96Q95.48 44.96 96.62 43.85Q97.75999999999999 42.74 98.3 40.82ZM131.12 11.0H139.64000000000001Q139.94 11.0 140.15 11.21Q140.36 11.420000000000002 140.36 11.719999999999999V52.28Q140.36 52.58 140.15 52.79Q139.94 53.0 139.64000000000001 53.0H131.12Q130.82 53.0 130.61 52.79Q130.4 52.58 130.4 52.28V50.3Q130.4 50.12 130.28 50.09Q130.16 50.06 130.04000000000002 50.18Q127.64000000000001 53.48 123.14 53.48Q119.06 53.48 115.91 51.019999999999996Q112.76 48.56 111.44000000000001 44.3Q110.48 41.06 110.48 37.34Q110.48 33.14 111.74000000000001 29.78Q113.12 26.060000000000002 116.15 23.78Q119.18 21.5 123.5 21.5Q127.82000000000001 21.5 130.04000000000002 24.32Q130.16 24.5 130.28 24.44Q130.4 24.380000000000003 130.4 24.200000000000003V11.719999999999999Q130.4 11.420000000000002 130.61 11.21Q130.82 11.0 131.12 11.0ZM130.4 37.52Q130.4 34.04 129.26 32.120000000000005Q128.0 30.02 125.72 30.02Q123.26 30.02 122.06 32.18Q120.86000000000001 34.22 120.86000000000001 37.52Q120.86000000000001 40.7 121.94000000000001 42.68Q123.2 44.96 125.72 44.96Q128.12 44.96 129.38 42.620000000000005Q130.4 40.7 130.4 37.52ZM142.51999999999998 52.28V44.54Q142.51999999999998 44.0 142.88 43.64L155.17999999999998 31.34Q155.29999999999998 31.220000000000002 155.23999999999998 31.1Q155.17999999999998 30.98 155.0 30.98H143.6Q143.29999999999998 30.98 143.08999999999997 30.770000000000003Q142.88 30.560000000000002 142.88 30.26V22.700000000000003Q142.88 22.400000000000002 143.08999999999997 22.19Q143.29999999999998 21.98 143.6 21.98H166.64Q166.94 21.98 167.14999999999998 22.19Q167.35999999999999 22.400000000000002 167.35999999999999 22.700000000000003V30.44Q167.35999999999999 30.98 167.0 31.34L154.22 43.64Q154.1 43.76 154.16 43.879999999999995Q154.22 44.0 154.39999999999998 44.0H167.0Q167.29999999999998 44.0 167.51 44.21Q167.72 44.42 167.72 44.72V52.28Q167.72 52.58 167.51 52.79Q167.29999999999998 53.0 167.0 53.0H143.23999999999998Q142.94 53.0 142.73 52.79Q142.51999999999998 52.58 142.51999999999998 52.28ZM198.8 39.5Q198.74 40.22 198.02 40.22H179.72000000000003Q179.60000000000002 40.22 179.48000000000002 40.31Q179.36 40.4 179.42000000000002 40.519999999999996Q179.54000000000002 41.18 180.02 42.26Q180.74 43.519999999999996 182.18 44.3Q183.62 45.08 185.72000000000003 45.08Q189.5 45.08 191.66000000000003 42.620000000000005Q191.9 42.32 192.20000000000002 42.32Q192.5 42.32 192.68 42.56L197.3 47.84Q197.54000000000002 48.02 197.54000000000002 48.32Q197.54000000000002 48.56 197.3 48.8Q195.20000000000002 51.08 192.11 52.28Q189.02 53.48 185.36 53.48Q179.9 53.48 176.09 51.11Q172.28 48.74 170.60000000000002 44.480000000000004Q169.34 41.480000000000004 169.34 36.980000000000004Q169.34 33.86 170.3 30.98Q171.86 26.540000000000003 175.43 23.990000000000002Q179.0 21.44 183.92000000000002 21.44Q187.88000000000002 21.44 191.0 23.15Q194.12 24.86 196.07 27.89Q198.02 30.92 198.62 34.760000000000005Q198.92000000000002 36.56 198.8 39.5ZM179.78 32.96Q179.54000000000002 33.620000000000005 179.48000000000002 34.22Q179.36 34.519999999999996 179.72000000000003 34.519999999999996H188.24Q188.48000000000002 34.519999999999996 188.48000000000002 34.28Q188.48000000000002 33.8 188.24 33.08Q187.82000000000002 31.580000000000002 186.71000000000004 30.8Q185.60000000000002 30.02 183.92000000000002 30.02Q180.8 30.02 179.78 32.96ZM208.4 52.4 199.7 22.76 199.64000000000001 22.52Q199.64000000000001 21.92 200.3 21.92H209.12Q209.78 21.92 209.9 22.580000000000002L213.5 38.84Q213.56 39.08 213.68 39.08Q213.8 39.08 213.86 38.84L217.76 22.52Q217.94 21.92 218.54 21.92H226.22Q226.88 21.92 227.06 22.52L231.14 38.9Q231.2 39.08 231.32 39.08Q231.44 39.08 231.5 38.9L235.52 22.52Q235.7 21.92 236.36 21.92L245.12 22.040000000000003Q245.48000000000002 22.040000000000003 245.63 22.25Q245.78 22.46 245.72 22.82L236.9 52.4Q236.72 53.0 236.12 53.0H227.3Q226.64 53.0 226.46 52.4L222.5 38.42Q222.44 38.24 222.32 38.24Q222.2 38.24 222.14 38.42L218.78 52.4Q218.6 53.0 218.0 53.0H209.18Q208.58 53.0 208.4 52.4Z" fill="#16181B"/></g></svg></a>
+    <button class="menu-p" type="button" id="menu-p" aria-expanded="false" aria-controls="nawigacja"><svg class="ik" aria-hidden="true"><use href="#i-menu"/></svg>Menu</button>
+    <nav id="nawigacja" aria-label="Główna">
+      <a href="/podglad/#przetestuj">Przetestuj asystenta</a>
+      <a href="/podglad/#jak">Jak to działa</a>
+      <a href="/podglad/#kalkulator">Kalkulator strat</a>
+      <a href="/podglad/#cennik">Cennik</a>
+      <a href="/podglad/#pytania">Pytania</a>
+      <a class="przycisk" href="/podglad/#audyt">Umów audyt</a>
+    </nav>
+  </div>
+</header>
+<main id="tresc" class="pas" tabindex="-1">
+  <div class="kol dokument">
+    <a class="lacze wroc" href="/podglad/">Wróć na stronę główną</a>
+    <h1>Polityka prywatności</h1>
+    <p class="lead">Krótko: zbieramy tylko to, co sam nam podasz, i&nbsp;używamy tego wyłącznie po to, żeby się z&nbsp;Tobą skontaktować.</p>
+    <section>
+      <h2>Administrator danych</h2>
+      <p><span id="pp-administrator">Michał Pakuła, Odzew, Kielce</span>.</p>
+    </section>
+    <section>
+      <h2>Jakie dane i&nbsp;po co</h2>
+      <p>Imię, nazwa firmy, telefon, e-mail i&nbsp;treść wiadomości z&nbsp;formularza. Używamy ich wyłącznie po to, żeby odpowiedzieć na Twoją prośbę o&nbsp;kontakt i&nbsp;umówić audyt (art. 6 ust. 1 lit. b i&nbsp;f RODO).</p>
+    </section>
+    <section>
+      <h2>Rozmowy z&nbsp;wirtualnym asystentem</h2>
+      <p>Pod numerem <span class="nw" data-tel-tekst>41&nbsp;230 67 85</span> odbiera wirtualny asystent. Rozmowa jest nagrywana i&nbsp;zapisywana jako tekst, o&nbsp;czym asystent mówi na początku. Nagranie i&nbsp;zapis służą do obsługi Twojego zgłoszenia. Rozmowy głosowe obsługuje zewnętrzny dostawca technologii głosu.</p>
+    </section>
+    <section>
+      <h2>Komu je powierzamy</h2>
+      <p>Dostawcom, z&nbsp;których korzystamy przy obsłudze zgłoszeń: hostingu i&nbsp;serwera w&nbsp;Unii Europejskiej, poczty elektronicznej i&nbsp;bramki SMS. Nie sprzedajemy danych i&nbsp;nie przekazujemy ich do celów reklamowych.</p>
+    </section>
+    <section>
+      <h2>Jak długo</h2>
+      <p>Do 12&nbsp;miesięcy od ostatniego kontaktu, a&nbsp;jeśli zostaniesz klientem, przez czas trwania umowy i&nbsp;okres wymagany przepisami.</p>
+    </section>
+    <section>
+      <h2>Twoje prawa</h2>
+      <p>Dostęp do danych, sprostowanie, usunięcie, ograniczenie przetwarzania, sprzeciw oraz skarga do Prezesa Urzędu Ochrony Danych Osobowych. Wystarczy wiadomość na adres podany w&nbsp;kontakcie.</p>
+    </section>
+    <section>
+      <h2>Pliki cookie i&nbsp;śledzenie</h2>
+      <p>Ta strona nie używa plików cookie do analityki ani reklam. Czcionki są wczytywane z&nbsp;naszego serwera. Kalkulator liczy wszystko w&nbsp;Twojej przeglądarce.</p>
+    </section>
+  </div>
+</main>
+<footer class="stopka">
+  <div class="kol">
+    <div class="stopka-w">
+      <div class="stopka-marka">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 246.7 64" role="img" aria-label="Odzew"><g transform="translate(0 0)"><g transform="translate(0 0) scale(1)"><rect width="64" height="64" rx="14" fill="#FFC21A"/><rect x="28" y="6" width="8" height="6" rx="2" fill="#16181B"/><circle cx="32" cy="33" r="17" fill="none" stroke="#16181B" stroke-width="7"/><path d="M19.5 44.5 L12 55 L26 50.5 Z" fill="#16181B"/><path d="M32 33 L39.5 25.5" stroke="#16181B" stroke-width="5" stroke-linecap="round"/><circle cx="32" cy="33" r="3.5" fill="#16181B"/></g><path d="M79.52 42.8Q78.8 40.34 78.8 37.4Q78.8 34.1 79.58 31.580000000000002Q80.96 26.84 84.71 24.17Q88.46 21.5 93.8 21.5Q99.08 21.5 102.74000000000001 24.17Q106.4 26.84 107.84 31.52Q108.68 34.22 108.68 37.28Q108.68 40.04 108.02 42.56Q106.75999999999999 47.6 102.97999999999999 50.54Q99.2 53.48 93.74 53.48Q88.34 53.48 84.56 50.599999999999994Q80.78 47.72 79.52 42.8ZM98.3 40.82Q98.66 39.26 98.66 37.4Q98.66 35.6 98.24 33.92Q97.75999999999999 32.06 96.62 31.04Q95.48 30.02 93.74 30.02Q90.26 30.02 89.18 33.92Q88.82 35.36 88.82 37.4Q88.82 39.26 89.18 40.82Q89.66 42.74 90.83 43.85Q92.0 44.96 93.74 44.96Q95.48 44.96 96.62 43.85Q97.75999999999999 42.74 98.3 40.82ZM131.12 11.0H139.64000000000001Q139.94 11.0 140.15 11.21Q140.36 11.420000000000002 140.36 11.719999999999999V52.28Q140.36 52.58 140.15 52.79Q139.94 53.0 139.64000000000001 53.0H131.12Q130.82 53.0 130.61 52.79Q130.4 52.58 130.4 52.28V50.3Q130.4 50.12 130.28 50.09Q130.16 50.06 130.04000000000002 50.18Q127.64000000000001 53.48 123.14 53.48Q119.06 53.48 115.91 51.019999999999996Q112.76 48.56 111.44000000000001 44.3Q110.48 41.06 110.48 37.34Q110.48 33.14 111.74000000000001 29.78Q113.12 26.060000000000002 116.15 23.78Q119.18 21.5 123.5 21.5Q127.82000000000001 21.5 130.04000000000002 24.32Q130.16 24.5 130.28 24.44Q130.4 24.380000000000003 130.4 24.200000000000003V11.719999999999999Q130.4 11.420000000000002 130.61 11.21Q130.82 11.0 131.12 11.0ZM130.4 37.52Q130.4 34.04 129.26 32.120000000000005Q128.0 30.02 125.72 30.02Q123.26 30.02 122.06 32.18Q120.86000000000001 34.22 120.86000000000001 37.52Q120.86000000000001 40.7 121.94000000000001 42.68Q123.2 44.96 125.72 44.96Q128.12 44.96 129.38 42.620000000000005Q130.4 40.7 130.4 37.52ZM142.51999999999998 52.28V44.54Q142.51999999999998 44.0 142.88 43.64L155.17999999999998 31.34Q155.29999999999998 31.220000000000002 155.23999999999998 31.1Q155.17999999999998 30.98 155.0 30.98H143.6Q143.29999999999998 30.98 143.08999999999997 30.770000000000003Q142.88 30.560000000000002 142.88 30.26V22.700000000000003Q142.88 22.400000000000002 143.08999999999997 22.19Q143.29999999999998 21.98 143.6 21.98H166.64Q166.94 21.98 167.14999999999998 22.19Q167.35999999999999 22.400000000000002 167.35999999999999 22.700000000000003V30.44Q167.35999999999999 30.98 167.0 31.34L154.22 43.64Q154.1 43.76 154.16 43.879999999999995Q154.22 44.0 154.39999999999998 44.0H167.0Q167.29999999999998 44.0 167.51 44.21Q167.72 44.42 167.72 44.72V52.28Q167.72 52.58 167.51 52.79Q167.29999999999998 53.0 167.0 53.0H143.23999999999998Q142.94 53.0 142.73 52.79Q142.51999999999998 52.58 142.51999999999998 52.28ZM198.8 39.5Q198.74 40.22 198.02 40.22H179.72000000000003Q179.60000000000002 40.22 179.48000000000002 40.31Q179.36 40.4 179.42000000000002 40.519999999999996Q179.54000000000002 41.18 180.02 42.26Q180.74 43.519999999999996 182.18 44.3Q183.62 45.08 185.72000000000003 45.08Q189.5 45.08 191.66000000000003 42.620000000000005Q191.9 42.32 192.20000000000002 42.32Q192.5 42.32 192.68 42.56L197.3 47.84Q197.54000000000002 48.02 197.54000000000002 48.32Q197.54000000000002 48.56 197.3 48.8Q195.20000000000002 51.08 192.11 52.28Q189.02 53.48 185.36 53.48Q179.9 53.48 176.09 51.11Q172.28 48.74 170.60000000000002 44.480000000000004Q169.34 41.480000000000004 169.34 36.980000000000004Q169.34 33.86 170.3 30.98Q171.86 26.540000000000003 175.43 23.990000000000002Q179.0 21.44 183.92000000000002 21.44Q187.88000000000002 21.44 191.0 23.15Q194.12 24.86 196.07 27.89Q198.02 30.92 198.62 34.760000000000005Q198.92000000000002 36.56 198.8 39.5ZM179.78 32.96Q179.54000000000002 33.620000000000005 179.48000000000002 34.22Q179.36 34.519999999999996 179.72000000000003 34.519999999999996H188.24Q188.48000000000002 34.519999999999996 188.48000000000002 34.28Q188.48000000000002 33.8 188.24 33.08Q187.82000000000002 31.580000000000002 186.71000000000004 30.8Q185.60000000000002 30.02 183.92000000000002 30.02Q180.8 30.02 179.78 32.96ZM208.4 52.4 199.7 22.76 199.64000000000001 22.52Q199.64000000000001 21.92 200.3 21.92H209.12Q209.78 21.92 209.9 22.580000000000002L213.5 38.84Q213.56 39.08 213.68 39.08Q213.8 39.08 213.86 38.84L217.76 22.52Q217.94 21.92 218.54 21.92H226.22Q226.88 21.92 227.06 22.52L231.14 38.9Q231.2 39.08 231.32 39.08Q231.44 39.08 231.5 38.9L235.52 22.52Q235.7 21.92 236.36 21.92L245.12 22.040000000000003Q245.48000000000002 22.040000000000003 245.63 22.25Q245.78 22.46 245.72 22.82L236.9 52.4Q236.72 53.0 236.12 53.0H227.3Q226.64 53.0 226.46 52.4L222.5 38.42Q222.44 38.24 222.32 38.24Q222.2 38.24 222.14 38.42L218.78 52.4Q218.6 53.0 218.0 53.0H209.18Q208.58 53.0 208.4 52.4Z" fill="#FFFFFF"/></g></svg>
+        <p class="haslo">Żadne zapytanie nie przepada.</p>
+      </div>
+      <nav aria-label="W stopce">
+        <h2>Na stronie</h2>
+        <ul>
+          <li><a href="/podglad/#przetestuj">Przetestuj asystenta</a></li>
+          <li><a href="/podglad/#jak">Jak to działa</a></li>
+          <li><a href="/podglad/#kalkulator">Kalkulator strat</a></li>
+          <li><a href="/podglad/#cennik">Cennik</a></li>
+          <li><a href="/podglad/#pytania">Pytania</a></li>
+          <li><a href="/podglad/#audyt">Bezpłatny audyt</a></li>
+        </ul>
+      </nav>
+      <div>
+        <h2>Kontakt</h2>
+        <ul>
+          <li data-tel-blok>Kamil, wirtualny asystent, całą dobę: <a class="nw" data-tel-href href="tel:+48412306785"><span data-tel-tekst>41&nbsp;230 67 85</span></a></li>
+          <li id="st-telefon" hidden></li>
+          <li id="st-email" hidden></li>
+          <li>Kielce i&nbsp;województwo świętokrzyskie</li>
+        </ul>
+      </div>
+      <div>
+        <h2>Firma</h2>
+        <ul>
+          <li id="st-firma" hidden></li>
+          <li><a href="/podglad/polityka-prywatnosci/">Polityka prywatności</a></li>
+          <li>Realizacja: <a href="https://www.visilogo.com" rel="noopener">VisiLogo</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="tylko-podglad" style="margin-top:28px">Notatka widoczna tylko w&nbsp;podglądzie: po uzupełnieniu KONFIG.telefon, KONFIG.email i&nbsp;KONFIG.administrator w&nbsp;tej stopce pojawią się telefon, e-mail i&nbsp;dane firmy.</p>
+    <div class="stopka-dol"><span>© <span id="rok">2026</span> Odzew</span><span>Wirtualny asystent telefoniczny dla firm, które sprzedają na wycenę.</span></div>
+  </div>
+</footer>
+<script>
+/* Część wspólna dla wszystkich podstron: nagłówek, menu, numer asystenta, dane ze stopki. */
+(function () {
+  const $ = id => document.getElementById(id);
+  const telHref = n => 'tel:+48' + n.replace(/\D/g, '').replace(/^48(?=\d{9}$)/, '');
+
+  // nagłówek zmniejsza się po przewinięciu
+  const gora = $('gora'); let czeka = false;
+  function przewin() { czeka = false; gora.classList.toggle('mala', window.scrollY > 24); }
+  window.addEventListener('scroll', () => { if (!czeka) { czeka = true; requestAnimationFrame(przewin); } }, { passive: true });
+  przewin();
+
+  // menu na telefonie
+  const mp = $('menu-p'), nav = $('nawigacja');
+  function menu(otw) { nav.classList.toggle('otwarte', otw); mp.setAttribute('aria-expanded', String(otw)); }
+  mp.addEventListener('click', () => menu(mp.getAttribute('aria-expanded') !== 'true'));
+  nav.addEventListener('click', e => { if (e.target.closest('a')) menu(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && mp.getAttribute('aria-expanded') === 'true') { menu(false); mp.focus(); } });
+
+  // numer, pod którym odbiera asystent
+  if (KONFIG.telefonDemo) {
+    document.querySelectorAll('[data-tel-tekst]').forEach(e => { e.textContent = KONFIG.telefonDemo; });
+    document.querySelectorAll('[data-tel-href]').forEach(e => { e.href = telHref(KONFIG.telefonDemo); });
+  } else {
+    document.querySelectorAll('[data-tel-href], [data-tel-blok]').forEach(e => { e.hidden = true; });
+  }
+
+  // stopka: puste pola z KONFIG po prostu się nie pokazują
+  function lacze(href, tekst) { const a = document.createElement('a'); a.href = href; a.textContent = tekst; a.className = 'nw'; return a; }
+  if (KONFIG.telefon) { const e = $('st-telefon'); e.append('Biuro: ', lacze(telHref(KONFIG.telefon), KONFIG.telefon)); e.hidden = false; }
+  if (KONFIG.email) { const e = $('st-email'); e.append(lacze('mailto:' + KONFIG.email, KONFIG.email)); e.hidden = false; }
+  if (KONFIG.administrator) { const e = $('st-firma'); e.textContent = KONFIG.administrator; e.hidden = false; }
+  $('rok').textContent = new Date().getFullYear();
+
+  window.ODZEW = { $, telHref, lacze };
+})();
+</script>
+<script>
+if (KONFIG.administrator) document.getElementById('pp-administrator').textContent = KONFIG.administrator;
+</script>
+</body>
+</html>
